@@ -1,0 +1,44 @@
+Location - saved, deleted
+ - lat, long, time, trackingId
+TrackingSession - saved, can be deleted if no userId
+ - id, userId*, time, duration (10/20/30 min), [end time?]
+User - saved, updated
+ - id, email, fname, lname
+Credential
+ - userId, salt, phash
+
+
+as a (logged in/logged out) user I want to track my location so that I can share with others. 
+as a logged out user I can only track for 10 minutes so that I can quickly let others know where I am without leaving any history.
+as a logged in user I can track my location for 10, 20, 30, 40 minutes and record this tracking session for future.
+as a user being tracked, my location should ideally update every 30 seconds, or every 60 seconds at worst so that data is up to date.
+as a user I want to be able to see my past trackings between 2 dates so that I can analyze my movements (via a map). (load 10 at a time)
+as a user I want to be able to export a tracking session to an csv/txt/json file so that I can keep a copy locally. (maybe share later)
+
+as a user I want to be able to register with my email address and set a password.
+as a user I want to be able to reset my password so that I can maintain security.
+as a user I want to be able to update my account information so that it reflects the latest information.
+as a user I want to login via my email and created my password or via gmail to make it easy to log in.
+as a user if I log with gmail and there is no user account, it should be created without any credentials.
+
+as a logged out user I want to be able to receive a tracking code and enter it to view a tracking session.
+as a user I want to be able to view a tracking session via a map or via AR (requires your location) to easily visualize the tracking data.
+as a user I want to be able to export a tracking session data to keep a copy locally. ONLY if this tracking session is anonymous
+
+
+ENDPOINTS
+/register
+/login
+/forgotPassword
+/updateProfile
+
+/startTracking
+/updateLocation?id=
+/stopTracking?id=
+
+/listTrackings?userId=_&from=_&end=_
+/viewTracking?id=
+/exportTracking?id=_&type=csv|txt|json
+
+
+PAGES: view tracking, start tracking, history, profile
