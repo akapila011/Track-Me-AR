@@ -29,7 +29,7 @@ coverage
 benchmarks/graphs
 
 # React App gitignore
-idea/
+.idea/
 vscode/
 node_modules/
 build
@@ -44,3 +44,5 @@ yarn-error.log*
 /.changelog
 .npm/
 #yarn.lock
+
+*.env
