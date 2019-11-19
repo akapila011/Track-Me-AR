@@ -2,7 +2,7 @@ import createUser from "../src/entities/User";
 
 
 describe('User', () => {
-    it('User ID error on "" id', () => {
+    it('User ID error on empty id', () => {
         const user = {
             id: "", firstName: "First name", lastName: "Last name", email: "example@domain.com"
         };
