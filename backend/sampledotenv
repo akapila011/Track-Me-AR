@@ -1,4 +1,4 @@
 # Save this file as .env and fill in the appropriate values
-BASE_URL=http://localhost:3000/
+BASE_URL=http://localhost:5000
 DB_URL=mongodb://localhost:27017
 DB_NAME=trackmeardb

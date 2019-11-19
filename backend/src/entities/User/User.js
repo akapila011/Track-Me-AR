@@ -1,11 +1,11 @@
 
 export function buildCreateUser({idValidator, nameValidator, emailValidator, dateValidator}) {
     return function createUser({
-        id, firstName, lastName, email, dateCreated = Date.now()
+        id, firstName, lastName, email, dateCreated = new Date()
                                } = {}) {
         const validIdResult = idValidator.isValidUUID(id);
         if (!validIdResult.valid) {
-            throw new Error(${validIdResult.message});
+            throw new Error(validIdResult.message);
         }
         const validFirstNameResult = nameValidator.isValidFirstName(firstName);
         if (!validFirstNameResult.valid) {
@@ -19,9 +19,9 @@ export function buildCreateUser({idValidator, nameValidator, emailValidator, dat
         if (!validEmailResult.valid) {
             throw new Error(validEmailResult.message);
         }
-        const validDateResult = dateCreated.isValidDate(dateCreated);
+        const validDateResult = dateValidator.isValidDate(dateCreated);
         if (!validDateResult.valid) {
-            throw new Error(`User's date created value is invalid. ${validLastNameResult.message}`);
+            throw new Error(`User's date created value is invalid. ${validDateResult.message}`);
         }
 
         return Object.freeze({
@@ -29,7 +29,8 @@ export function buildCreateUser({idValidator, nameValidator, emailValidator, dat
             getFirstName: () => this.firstName,
             getLastName: () => this.lastName,
             getName: () => `${this.firstName} ${this.lastName}`,
-            getEmail: () => this.email
+            getEmail: () => this.email,
+            getDateCreated: () => this.dateCreated
         })
     }
 }
