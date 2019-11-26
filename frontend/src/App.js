@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
+// import logo from './logo.svg';
 import './App.css';
+import Home from "./components/Home/Home";
+import {BrowserRouter, Route, Link} from 'react-router-dom';
+import {Grid} from "@material-ui/core/es/index";
+import ViewTracking from "./components/ViewTracking/ViewTracking";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+    render() {
+        return (
+            <BrowserRouter>
+                <nav>
+                    <ul>
+                        <li>
+                            <Link to="/">Home</Link>
+                        </li>
+                    </ul>
+                </nav>
+
+                <Grid>
+                    <Route exact={true} path='/' render={() => (
+                        <div className="App">
+                            <Home/>
+                        </div>
+                    )}/>
+                    <Route path="/view/:trackingId" component={ViewTracking} />
+                </Grid>
+            </BrowserRouter>
+        );
+    }
 }
 
 export default App;
