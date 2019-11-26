@@ -11,6 +11,7 @@ app.use(express.json());
 
 app.get(`/`, (req, res) => {res.send('Hello World!');});
 app.post(`/saveUser`, userController.saveUserController);
+app.get(`/verifyUser`, userController.verifyUserController);
 
 
 
