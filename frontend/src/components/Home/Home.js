@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Grid} from "@material-ui/core/es/index";
+import {Grid} from "@material-ui/core";
 import ViewTracking from "../ViewTracking/ViewTracking";
 
 export default class Home extends Component {
@@ -12,11 +12,21 @@ export default class Home extends Component {
   
   render () {
       return (
-          <Grid container spacing={3} id="home">
+          <Grid id="home"
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+          >
               <Grid item xs={12}>
                   <h2>Track Me AR</h2>
               </Grid>
-              <ViewTracking/>
+              <Grid item xs={6}>
+                  <h3>Menu</h3>
+              </Grid>
+              <Grid item xs={6}>
+                  <ViewTracking/>
+              </Grid>
 
           </Grid>
       )
