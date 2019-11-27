@@ -1,10 +1,9 @@
-export function makeSaveUser ({ saveUserUsecase }) {
+export function makeSaveTempUser ({ saveTempUserUsecase }) {
     return async function saveUser (httpRequest) {
         try {
             const userBody = httpRequest.body;
 
-
-            const savedMessage = await saveUserUsecase({userBody});
+            const savedMessage = await saveTempUserUsecase({userBody});
             return {
                 headers: {
                     'Content-Type': 'application/json',
@@ -28,13 +27,13 @@ export function makeSaveUser ({ saveUserUsecase }) {
     }
 }
 
-export function makeVerifyUser ({ saveUserUsecase: verifyUserUsecase }) {
+export function makeVerifyUser ({ verifyUserUsecase: verifyUserEmailUsecase }) {
     return async function saveUser (httpRequest) {
         try {
             const userBody = httpRequest.body;
 
 
-            const savedMessage = await verifyUserUsecase({userBody});
+            const savedMessage = await verifyUserEmailUsecase({userBody});
             return {
                 headers: {
                     'Content-Type': 'application/json',

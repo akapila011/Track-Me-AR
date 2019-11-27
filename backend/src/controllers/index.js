@@ -1,8 +1,10 @@
-import {makeSaveUser, makeVerifyUser} from "./userController";
+import {makeSaveTempUser, makeVerifyUser} from "./userController";
 import {userService} from "../usecases"
 
-const saveUserController = makeSaveUser({ userService });
-const verifyUserController = makeVerifyUser({ userService });
+const {saveTempUser, verifyUserEmail} = userService;
+
+const saveUserController = makeSaveTempUser({ saveTempUser });
+const verifyUserController = makeVerifyUser({ verifyUserEmail });
 
 export const userController = Object.freeze({
     saveUserController,
