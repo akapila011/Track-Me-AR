@@ -25,13 +25,13 @@ export default class ViewTracking extends Component {
                 {
                     viewMap &&
                     <Container fixed id="map">
-                        <img src={mapPlaceholder} alt="Map" width="800" height="500"/>
+                        <img src={mapPlaceholder} alt="Map" width="1000" height="600"/>
                     </Container>
                 }
                 {
                     viewAR &&
                     <Container fixed id="ar">
-                        <img src={arPlaceholder} alt="Augmented Reality" width="800" height="500"/>
+                        <img src={arPlaceholder} alt="Augmented Reality" width="1000" height="600"/>
                     </Container>
                 }
                 </Grid>

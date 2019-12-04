@@ -3,9 +3,8 @@ import React, {Component} from 'react';
 import './App.css';
 import Home from "./components/Home/Home";
 import {BrowserRouter, Route, Link} from 'react-router-dom';
-import {AppBar, Grid, Menu, MenuItem, Paper, Tabs, Toolbar, Typography} from "@material-ui/core";
+import {AppBar, Grid, Menu, MenuItem, Toolbar, LinearProgress, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, } from "@material-ui/core";
 import ViewTracking from "./components/ViewTracking/ViewTracking";
-import Tab from "@material-ui/icons/esm/Tab";
 import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
 
@@ -57,6 +56,14 @@ class NavBar extends Component {
         this.setState({menuAnchor: null});
     }
 
+    closeSignInForm() {
+        this.setState({showSignInForm: false});
+    }
+
+    closeRegisterForm() {
+        this.setState({showRegisterForm: false});
+    }
+
     render() {
         const isLoggedIn = this.props.userId !== "";
         return (
@@ -73,10 +80,96 @@ class NavBar extends Component {
                             </Link>
                         </Grid>
 
+                        <Dialog open={this.state.showSignInForm} onClose={this.closeSignInForm.bind(this)} aria-labelledby="form-dialog-title">
+                            <DialogTitle id="form-dialog-title">Sign In</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Sign to enjoy an enhanced experience.
+                                </DialogContentText>
+                                <TextField
+                                    autoFocus
+                                    required
+                                    margin="dense"
+                                    id="email"
+                                    label="Email Address"
+                                    type="email"
+                                    fullWidth
+                                />
+                                <TextField
+                                    required
+                                    margin="dense"
+                                    id="password"
+                                    label="Password"
+                                    type="password"
+                                    fullWidth
+                                />
+                            </DialogContent>
+                            <LinearProgress />
+                            <DialogActions>
+                                <Button onClick={this.closeSignInForm.bind(this)} color="secondary">
+                                    Cancel
+                                </Button>
+                                <Button onClick={this.closeSignInForm.bind(this)} color="primary">
+                                    Sign In
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+
+                        <Dialog open={this.state.showRegisterForm} onClose={this.closeRegisterForm.bind(this)} aria-labelledby="form-dialog-title">
+                            <DialogTitle id="form-dialog-title">Sign Up</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Sign Up to get track sessions for much longer and log & export your tracking history. It is completely free!
+                                </DialogContentText>
+                                <TextField
+                                    autoFocus
+                                    required
+                                    margin="dense"
+                                    helperText="You will use this email to login. You will be required to verify this email."
+                                    id="email"
+                                    label="Email Address"
+                                    type="email"
+                                    fullWidth
+                                />
+                                <TextField
+                                    required
+                                    margin="dense"
+                                    id="firstName"
+                                    label="First Name"
+                                    type="text"
+                                    halfWidth
+                                />
+                                <TextField
+                                    margin="dense"
+                                    id="lastName"
+                                    label="Last Name"
+                                    type="text"
+                                    halfWidth
+                                />
+                                <TextField
+                                    required
+                                    margin="dense"
+                                    id="password"
+                                    label="Password"
+                                    type="password"
+                                    fullWidth
+                                />
+                            </DialogContent>
+                            <LinearProgress />
+                            <DialogActions>
+                                <Button onClick={this.closeSignInForm.bind(this)} color="secondary">
+                                    Cancel
+                                </Button>
+                                <Button onClick={this.closeSignInForm.bind(this)} color="primary">
+                                    Sign In
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+
                         {   !isLoggedIn &&
                         <Grid item >
-                            <Button color="primary">Sign In</Button>
-                            <Button color="secondary">Register</Button>
+                            <Button color="primary" onClick={() => {this.setState({showSignInForm: true});}}>Sign In</Button>
+                            <Button color="secondary" onClick={() => {this.setState({showRegisterForm: true});}}>Register</Button>
                         </Grid>
                         }
 
