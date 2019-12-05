@@ -5,6 +5,9 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import AdjustIcon from '@material-ui/icons/Adjust';
 import {geolocated} from 'react-geolocated';
+import Map from 'pigeon-maps'
+import Marker from 'pigeon-marker'
+import Overlay from 'pigeon-overlay'
 
 import mapPlaceholder from "../../assets/images/map-placeholder.jpg";
 import arPlaceholder from "../../assets/images/ar-placeholder.png";
@@ -21,7 +24,7 @@ class ViewTrackingChild extends Component {
         const isGeolocationAvailable = this.props.isGeolocationAvailable;
         const coords = this.props.coords;
 
-        const center = coords && coords.latitude && coords.longitude ? [coords.longitude, coords.latitude]: [36.81425, -1.272007];
+        const center = coords && coords.latitude && coords.longitude ? [coords.latitude, coords.longitude]: [-1.272007, 36.81425];
         // console.log("center ", center);
         const zoom = coords && coords.latitude && coords.longitude ? 15 : 12;
 
@@ -42,8 +45,14 @@ class ViewTrackingChild extends Component {
                 <Grid item xs={12}>
                 {
                     viewMap &&
-                    <Container fixed id="map">
-                        <img src={mapPlaceholder} alt="Map" width="1000" height="600"/>
+                    <Container id="map">
+                        <Map center={center} zoom={zoom} width={1000} height={600} attribution={false}>
+                            <Marker anchor={center} payload={1} onClick={({ event, anchor, payload }) => {
+                                console.log("Marker Click ", event)
+                                console.log("Marker Click ", anchor)
+                                console.log("Marker Click ", payload)
+                            }} />
+                        </Map>
                     </Container>
                 }
                 {
