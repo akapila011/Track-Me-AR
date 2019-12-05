@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Grid} from "@material-ui/core";
-import ViewTracking from "../ViewTracking/ViewTracking";
+import {ViewTracking} from "../ViewTracking/ViewTracking";
 import {TextField, Button} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';

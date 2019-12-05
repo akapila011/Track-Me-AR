@@ -4,9 +4,9 @@ import './App.css';
 import Home from "./components/Home/Home";
 import {BrowserRouter, Route, Link} from 'react-router-dom';
 import {AppBar, Grid, Menu, MenuItem, Toolbar, LinearProgress, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, } from "@material-ui/core";
-import ViewTracking from "./components/ViewTracking/ViewTracking";
 import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
+import ViewSession from "./components/ViewSession/ViewSession";
 
 class App extends Component {
     constructor(props) {
@@ -33,7 +33,7 @@ class App extends Component {
                             <Home/>
                         </div>
                     )}/>
-                    <Route path="/view/:trackingId" component={ViewTracking} />
+                    <Route path="/view/:trackingId" component={ViewSession} />
                 </Grid>
             </BrowserRouter>
         );
@@ -157,11 +157,11 @@ class NavBar extends Component {
                             </DialogContent>
                             <LinearProgress />
                             <DialogActions>
-                                <Button onClick={this.closeSignInForm.bind(this)} color="secondary">
+                                <Button onClick={this.closeRegisterForm.bind(this)} color="secondary">
                                     Cancel
                                 </Button>
-                                <Button onClick={this.closeSignInForm.bind(this)} color="primary">
-                                    Sign In
+                                <Button onClick={this.closeRegisterForm.bind(this)} color="primary">
+                                    Sign Up
                                 </Button>
                             </DialogActions>
                         </Dialog>
