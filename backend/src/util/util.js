@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt-nodejs';
+const bcrypt = require('bcrypt');
 
 export function isNullUndefined(variable) {
     return variable == null;
@@ -56,10 +56,14 @@ export function stringHasNumber(myString) {
 }
 
 export const hashing = {
+    saltRounds: 10,
+    generateSalt: () => {
+        return bcrypt.genSaltSync(10);
+        },
     generateHash: (password, salt) => {
-        return bcrypt.hashSync(password, salt, null);
+        return bcrypt.hashSync(password, salt);
     },
-    // hashMatch: (hash1, hash2) = {
-    //     return bcrypt.compareSync(hash1, hash2);
-    // },
+    passwordsMatch: (plainTextPassword, hash) => {
+        return bcrypt.compareSync(plainTextPassword, hash);
+    }
 };

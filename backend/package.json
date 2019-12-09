@@ -12,6 +12,7 @@
   "author": "akapila",
   "license": "ISC",
   "dependencies": {
+    "brcypt": "^1.0.1",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "mongodb": "^3.3.3",
