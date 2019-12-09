@@ -24,3 +24,28 @@ export function isArray(variable) {
 export function isValidDate(date) {
     return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
 }
+
+function generateRandomString(length, allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") {
+    let result           = '';
+    const charactersLength = allowedCharacters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += allowedCharacters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+export const codeGenerator = {
+    alphaNumeric: (length) => {
+        return generateRandomString(length);
+    }
+};
+
+function dec2hex (dec) {
+    return ('0' + dec.toString(16)).substr(-2);
+}
+
+export function generateUUID (len) {  // TODO: change this to use a library later
+    const arr = new Uint8Array((len || 40) / 2);
+    window.crypto.getRandomValues(arr);
+    return Array.from(arr, dec2hex).join('');
+}

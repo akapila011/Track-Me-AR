@@ -3,13 +3,13 @@ export function makeSaveTempUser ({ saveTempUserUsecase }) {
         try {
             const userBody = httpRequest.body;
 
-            const savedMessage = await saveTempUserUsecase({userBody});
+            const response = await saveTempUserUsecase({userBody});
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                statusCode: 201,
-                body: { message: savedMessage }
+                statusCode: response.statusCode,
+                body: { message: response.message }
             }
         } catch (e) {
             // TODO: Error logging
@@ -33,13 +33,13 @@ export function makeVerifyUser ({ verifyUserUsecase: verifyUserEmailUsecase }) {
             const userBody = httpRequest.body;
 
 
-            const savedMessage = await verifyUserEmailUsecase({userBody});
+            const response = await verifyUserEmailUsecase({userBody});
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                statusCode: 201,
-                body: { message: savedMessage }
+                statusCode: response.statusCode,
+                body: { message: response.message }
             }
         } catch (e) {
             // TODO: Error logging

@@ -1,7 +1,7 @@
-import createUser from "../src/entities/User";
+import createUser from "../../src/entities/User/index";
 
 
-describe('User', () => {
+describe('Entities: createUser', () => {
     it('User ID error on empty id', () => {
         const user = {
             id: "", firstName: "First name", lastName: "Last name", email: "example@domain.com"

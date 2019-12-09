@@ -13,7 +13,11 @@ export function buildCreateTempUser({makeUser, dateValidator}) {
 
         const validExpirationDateResult = dateValidator.isValidDate(dateInserted);
         if (!validExpirationDateResult.valid) {
-            throw new Error(`Va;lidation expiration date is invalid. ${validExpirationDateResult.message}`);
+            throw new Error(`Validation expiration date is invalid. ${validExpirationDateResult.message}`);
+        }
+
+        if (expirationDate <= dateInserted) {
+            throw new Error(`The expiration date for the user verification code cannot be before (or equal) the insertion date.`);
         }
 
         if (!isString(code)) {
@@ -35,6 +39,6 @@ export function buildCreateTempUser({makeUser, dateValidator}) {
             getExpirationDate: () => this.expirationDate,
             isExpired: (date) => {return date > this.expirationDate},
             getCode: () => this.code,
-        })
+        });
     }
 }

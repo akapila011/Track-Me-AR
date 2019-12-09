@@ -1,7 +1,7 @@
 import {dateValidator} from "../../util/validators";
-import {buildCreateTempUser} from "TempUser";
-import createUser from "../User";
+import createUser from "../User/index";
+import {buildCreateTempUser} from "./TempUser";
 
-const createTempUser = buildCreateTempUser({ createUser , dateValidator});
+const createTempUser = buildCreateTempUser({ makeUser: createUser , dateValidator});
 
 export default createTempUser;
