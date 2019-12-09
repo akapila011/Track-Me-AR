@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt-nodejs';
 
 export function isNullUndefined(variable) {
     return variable == null;
@@ -49,3 +50,16 @@ export function generateUUID (len) {  // TODO: change this to use a library late
     window.crypto.getRandomValues(arr);
     return Array.from(arr, dec2hex).join('');
 }
+
+export function stringHasNumber(myString) {
+    return /\d/.test(myString);
+}
+
+export const hashing = {
+    generateHash: (password, salt) => {
+        return bcrypt.hashSync(password, salt, null);
+    },
+    // hashMatch: (hash1, hash2) = {
+    //     return bcrypt.compareSync(hash1, hash2);
+    // },
+};
