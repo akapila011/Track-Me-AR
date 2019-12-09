@@ -1,4 +1,4 @@
-import {isNullUndefined, isString, isValidDate} from "./util";
+import {isNullUndefined, isString, isValidDate, stringHasNumber} from "./util";
 
 
 export const idValidator = {
@@ -79,6 +79,30 @@ export const dateValidator = {
     isValidDate: (date) => {
         const valid = isValidDate(date);
         const result = {valid: valid, message: !valid ? `Date ${date} could not be parsed` : ""};
+        return result;
+    }
+};
+
+export const passwordValidator = {
+    isValidPassword: (password) => {
+        const result = {valid: false, message: ""};
+        if (isNullUndefined(password)) {
+            result.message = "Missing password";
+            return result;
+        }
+        if (!isString(password)) {
+            result.message = "Password must be a text";
+            return result;
+        }
+        if (password.length < 8) {
+            result.message = "Password cannot have fewer than 8 characters.";
+            return result;
+        }
+        if (!stringHasNumber(password)) {
+            result.message = "Password should contain at least 1 digit (number)";
+            return result;
+        }
+        result.valid = true;
         return result;
     }
 };

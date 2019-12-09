@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt-nodejs';
 
 export function isNullUndefined(variable) {
     return variable == null;
@@ -24,3 +25,16 @@ export function isArray(variable) {
 export function isValidDate(date) {
     return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
 }
+
+export function stringHasNumber(myString) {
+    return /\d/.test(myString);
+}
+
+export const hashing = {
+    generateHash: (password, salt) => {
+        return bcrypt.hashSync(password, salt, null);
+    },
+    // hashMatch: (hash1, hash2) = {
+    //     return bcrypt.compareSync(hash1, hash2);
+    // },
+};
