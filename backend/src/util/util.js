@@ -56,14 +56,13 @@ export function stringHasNumber(myString) {
 }
 
 export const hashing = {
-    saltRounds: 10,
-    generateSalt: () => {
-        return bcrypt.genSaltSync(10);
+    generateSalt: (saltRounds = 10) => {
+        return bcrypt.genSaltSync(saltRounds);
         },
     generateHash: (password, salt) => {
         return bcrypt.hashSync(password, salt);
     },
-    passwordsMatch: (plainTextPassword, hash) => {
+    passwordsMatch: (plainTextPassword, hash, salt) => {
         return bcrypt.compareSync(plainTextPassword, hash);
     }
 };

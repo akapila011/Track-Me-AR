@@ -28,6 +28,7 @@ as a user I want to be able to export a tracking session data to keep a copy loc
 
 ENDPOINTS
 /register
+/verify-user
 /login
 /forgotPassword
 /updateProfile
