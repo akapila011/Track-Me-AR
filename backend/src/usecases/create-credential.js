@@ -1,17 +1,25 @@
 
-export function makeSaveTempUser({credentialsDb, createCredential, usersDb}) {
+export function makeCreateCredential({credentialsDb, createCredential, usersDb}) {
     return async function saveCredential(userId, password, salt) {
+        const response = {
+            statusCode: 500,
+            message: "Unknown Error: Check Logs"
+        };
 
         const credential = createCredential({userId, password, salt});
 
         const userAlreadyHasCredential = await credentialsDb.findByUserId(userId);
         if (userAlreadyHasCredential != null) {  // TODO: maybe go directly to update?
-            return "User has already set a password. Please try update the password."
+            response.statusCode = 400;
+            response.message = "User has already set a password. Please try update the password.";
+            return response;
         }
 
         const userIsSaved = await usersDb.findByUserId(userId);
         if (userIsSaved == null) {
-            return "User has not been saved. Cannot save the credentials."
+            response.statusCode = 404;
+            response.message = "User not found. Cannot save the credentials.";
+            return response;
         }
 
         credentialsDb.insert({
@@ -20,6 +28,8 @@ export function makeSaveTempUser({credentialsDb, createCredential, usersDb}) {
             pHash: credential.getPHash(),
         });
 
-        return "Password has been saved";
+        response.statusCode = 400;
+        response.message = "Password has been saved.";
+        return response;
     }
 }

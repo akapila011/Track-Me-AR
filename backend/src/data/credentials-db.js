@@ -4,29 +4,20 @@ export function makeCredentialsDb ({ dbClient, CredentialModel }) {
     async function findByUserId (userId) {
         CredentialModel.findByUserId(userId);
     }
-    async function insert ({ credential }) {
-        const db = await dbClient();
-        const result = await db
-            .collection(collectionName)
-            .insertOne({ credential});
-        const { _id: id, ...insertedInfo } = result.ops[0];
-        return { id, ...insertedInfo }
+    async function insert (credential) {
+        const result = await CredentialModel.create(credential);
+        return {result, credential};
     }
 
-    async function update ({ id: _id, ...commentInfo }) {
-        const db = await dbClient()
-        const result = await db
-            .collection(collectionName)
-            .updateOne({ _id }, { $set: { ...commentInfo } })
-        return result.modifiedCount > 0 ? { id: _id, ...commentInfo } : null
+    async function update (credential) {
+        const result = await CredentialModel.updateOne(credential);
+        return {result, credential};
     }
-    async function remove (userId) {
-        const db = await dbClient()
-        const result = await db.collection(collectionName).deleteOne({ userId: userId })
-        return result.deletedCount
+    async function remove (credential) {
+        const result = await CredentialModel.deleteOne(credential);
+        return {result, credential};
     }
-
-
+    
     return Object.freeze({
         findByUserId,
         insert,

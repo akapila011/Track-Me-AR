@@ -6,6 +6,8 @@ import {makeUsersTempDb} from "./users-temp-db";
 import makeCredentialsDb from './credentials-db';
 
 import {CredentialModel} from '../models/CredentialModel';
+import {UserModel} from '../models/UserModel';
+import {TempUserModel} from '../models/TempUserModel';
 
 const MongoClient = mongodb.MongoClient
 const url = process.env.DB_URL
@@ -19,7 +21,7 @@ export async function makeDb () {
     return client.db(dbName)
 }
 
-export const usersDb = makeUsersDb({makeDb});
-export const usersTempDb = makeUsersTempDb({makeDb});
+export const usersDb = makeUsersDb({makeDb, UserModel});
+export const usersTempDb = makeUsersTempDb({makeDb, TempUserModel});
 export const credentialsDb = makeCredentialsDb({makeDb, CredentialModel});
 

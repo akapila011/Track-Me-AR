@@ -28,7 +28,7 @@ export function makeSaveTempUser ({ saveTempUserUsecase }) {
 }
 
 export function makeVerifyUser ({ verifyUserUsecase: verifyUserEmailUsecase }) {
-    return async function saveUser (httpRequest) {
+    return async function verifyUser (httpRequest) {
         try {
             const userBody = httpRequest.body;
 

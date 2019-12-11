@@ -1,7 +1,7 @@
 import {isString} from "../../util/util";
 
 export function buildCreateTempUser({makeUser, dateValidator}) {
-    return function createUser({
+    return function createTempUser({
                                    id, firstName, lastName, email, dateCreated = new Date(), dateInserted = new Date(), expirationDate, code
                                } = {}) {
         const user = makeUser({id, firstName, lastName, email, dateCreated});
