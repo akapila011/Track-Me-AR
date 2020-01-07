@@ -8,7 +8,9 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
             message: "Unknown Error: Check Logs"
         };
 
+        const validationCode = codeGenerator.alphaNumeric(6);
         userData.id = !userData.id ? generateUUID(32) : userData.id;  // generate an id if non given
+        userData.code = validationCode;
         const tempUser = createTempUser(userData);
 
         // TODO: should it only use email, using id to ensure no collisions but might not be correct
@@ -25,7 +27,7 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
             return response;
         }
 
-        const validationCode = codeGenerator.alphaNumeric(6);
+
         const codeExists = await usersTempDb.findByCode(validationCode);  // TODO: try generate 10 times before failing
         if (codeExists != null) {
             response.statusCode = 409; // conflict

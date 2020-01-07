@@ -3,7 +3,9 @@ export function makeSaveTempUser ({ saveTempUserUsecase }) {
         try {
             const userBody = httpRequest.body;
 
-            const response = await saveTempUserUsecase({userBody});
+            console.log("userBody ", userBody);
+            const response = await saveTempUserUsecase({firstName: userBody.firstName, lastName: userBody.lastName, email: userBody.email});
+            console.log("response ", response);
             return {
                 headers: {
                     'Content-Type': 'application/json',

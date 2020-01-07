@@ -10,10 +10,11 @@ import createTempUser from "../entities/TempUser";
 
 // const saveUser = makeSaveUser({usersTempDb});
 const saveTempUser = makeSaveTempUser({usersTempDb, codeGenerator, usersDb});
-const verifyUser = makeVerifyUser({usersTempDb, usersDb, createTempUser});
 const saveCredential = makeCreateCredential({credentialsDb, createCredential, usersDb});
+const verifyUser = makeVerifyUser({usersTempDb, usersDb, createTempUser, createCredential, saveCredential});
+
 
 export const userService = Object.freeze({
-  saveTempUser: makeSaveTempUser,
+  saveTempUser: saveTempUser,
     verifyUser: verifyUser,
 });

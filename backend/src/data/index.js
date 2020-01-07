@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import {makeUsersDb} from "./users-db";
 import {makeUsersTempDb} from "./users-temp-db";
 
-import makeCredentialsDb from './credentials-db';
+import {makeCredentialsDb} from './credentials-db';
 
 import {CredentialModel} from '../models/CredentialModel';
 import {UserModel} from '../models/UserModel';

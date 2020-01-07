@@ -1,4 +1,5 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+const uuidv4 = require('uuid/v4');
 
 export function isNullUndefined(variable) {
     return variable == null;
@@ -45,10 +46,11 @@ function dec2hex (dec) {
     return ('0' + dec.toString(16)).substr(-2);
 }
 
-export function generateUUID (len) {  // TODO: change this to use a library later
-    const arr = new Uint8Array((len || 40) / 2);
-    window.crypto.getRandomValues(arr);
-    return Array.from(arr, dec2hex).join('');
+export function generateUUID () {  // TODO: change this to use a library later
+    // const arr = new Uint8Array((len || 40) / 2);
+    // window.crypto.getRandomValues(arr);
+    // return Array.from(arr, dec2hex).join('');
+    return uuidv4();
 }
 
 export function stringHasNumber(myString) {
