@@ -25,7 +25,7 @@ export function buildCreateTempUser({makeUser, dateValidator}) {
         }
 
         if (code.length < 6) {
-            throw new Error("Validation code must be atleast 6 characters");
+            throw new Error("Validation code must be at least 6 characters");
         }
 
         return Object.freeze({

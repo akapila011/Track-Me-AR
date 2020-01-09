@@ -5,10 +5,12 @@ import axios from 'axios';
 import Home from "./components/Home/Home";
 import {BrowserRouter, Route, Link} from 'react-router-dom';
 import {AppBar, Grid, Menu, MenuItem, Toolbar, LinearProgress, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, } from "@material-ui/core";
+import Snackbar from '@material-ui/core/Snackbar';
 import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
 import ViewSession from "./components/ViewSession/ViewSession";
 import {SIGN_UP_URL} from "./util/urls";
+import {showMessage, startLoader, stopLoader} from "./util/util";
 
 class App extends Component {
     constructor(props) {
@@ -161,6 +163,10 @@ class SignUp extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: false,
+            message: "",
+            messageType: "",
+
             firstName: "",
             lastName: "",
             email: "",
@@ -168,7 +174,7 @@ class SignUp extends Component {
     }
 
     signUpClicked() {
-        console.log("signUpClicked ")
+        startLoader(this);
         const sendData = {firstName: this.state.firstName, lastName: this.state.lastName, email: this.state.email};
         axios({
             method: "POST",
@@ -178,17 +184,18 @@ class SignUp extends Component {
         }).then((response) => {
             // console.log("signUpClicked response ", response);
             let data = response.data;
-
-
         }).catch((error) => {
-            if (error.response && error.response.status && error.response.data && error.response.data.statusCode && error.response.data.message) {
-                console.error(error.response.data.statusCode, error.response.data.message)
-                // showMessage(currentPageStore, error.response.data.type, error.response.data.message);
+            console.error(error.message);
+            console.log("got here");
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.log("and in if");
+
+                console.error(error.response.data.statusCode, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
             }
             // showMessage(currentPageStore, "error", error.message);
-            console.error(error.message);
         }).finally(() => {
-            // hideLoader(currentPageStore);
+            stopLoader(this);
         });  // end axios
     }
 
@@ -200,6 +207,13 @@ class SignUp extends Component {
                     <DialogContentText>
                         Sign Up to get track sessions for much longer and log & export your tracking history. It is completely free!
                     </DialogContentText>
+
+                        <Snackbar
+                            open={this.state.message}
+                            onClose={() => {this.setState({message: "", messageType: ""});}}
+                            message={this.state.message}
+                        />
+
                     <TextField
                         autoFocus
                         required
@@ -240,12 +254,16 @@ class SignUp extends Component {
                         {/*fullWidth*/}
                     {/*/>*/}
                 </DialogContent>
-                <LinearProgress />
+                {
+                    this.state.isLoading &&
+                    <LinearProgress />
+                }
+
                 <DialogActions>
-                    <Button onClick={this.props.closeRegisterForm} color="secondary">
+                    <Button onClick={this.props.closeRegisterForm} color="secondary" disabled={this.state.isLoading}>
                         Cancel
                     </Button>
-                    <Button onClick={this.signUpClicked.bind(this)} color="primary">
+                    <Button onClick={this.signUpClicked.bind(this)} color="primary" disabled={this.state.isLoading}>
                         Sign Up
                     </Button>
                 </DialogActions>

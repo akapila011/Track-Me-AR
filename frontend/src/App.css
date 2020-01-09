@@ -24,3 +24,19 @@
 .esri-ui{
   display: none;
 }
+
+.messageAlert {
+ font-size: 12px;
+  text-align: center;
+  margin: auto;
+}
+
+.info {
+  background-color: darkblue;
+  color: white;
+}
+
+.error {
+  background-color: darkred;
+  color: white;
+}

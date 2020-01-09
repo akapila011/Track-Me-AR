@@ -1,17 +1,20 @@
+import {statusCodeToType} from "../util/util";
+
 export function makeSaveTempUser ({ saveTempUserUsecase }) {
     return async function saveUser (httpRequest) {
         try {
             const userBody = httpRequest.body;
 
-            console.log("userBody ", userBody);
+            // console.log("userBody ", userBody);
             const response = await saveTempUserUsecase({firstName: userBody.firstName, lastName: userBody.lastName, email: userBody.email});
-            console.log("response ", response);
+            // console.log("response ", response);
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 statusCode: response.statusCode,
-                body: { message: response.message }
+
+                body: { type: statusCodeToType(response.statusCode), message: response.message }
             }
         } catch (e) {
             // TODO: Error logging
@@ -22,7 +25,8 @@ export function makeSaveTempUser ({ saveTempUserUsecase }) {
                 },
                 statusCode: 400,
                 body: {
-                    error: e.message
+                    type: "error",
+                    message: e.message
                 }
             }
         }

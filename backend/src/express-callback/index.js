@@ -12,10 +12,10 @@ module.exports = function makeExpressCallabck (controller) {
         Referer: req.get('referer'),
         'User-Agent': req.get('User-Agent')
       }
-    }
+    };
     controller(httpRequest)
       .then(httpResponse => {
-        console.log("in then ", httpResponse)
+        // console.log("in then ", httpResponse)
         if (httpResponse.headers) {
           res.set(httpResponse.headers)
         }
@@ -23,8 +23,8 @@ module.exports = function makeExpressCallabck (controller) {
         res.status(httpResponse.statusCode).send(httpResponse.body)
       })
       .catch(e => {
-          console.log("in catch ", e)
-          res.status(500).send({ message: 'An unkown error occurred.' })
+          // console.log("in catch ", e)
+          res.status(500).send({ type: "error", message: 'An unkown error occurred.' })
       });
   }
 }

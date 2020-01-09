@@ -68,3 +68,10 @@ export const hashing = {
         return bcrypt.compareSync(plainTextPassword, hash);
     }
 };
+
+export function statusCodeToType(httpCode) {
+    if (httpCode >= 200 || httpCode <= 299) {
+        return "success";
+    }
+    return "error";
+}
