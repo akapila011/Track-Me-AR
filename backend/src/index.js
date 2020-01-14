@@ -2,8 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import {getBaseUrl, isDev} from "./util/config";
 import {userController} from "./controllers";
-import makeCallback from './express-callback'
-
+import makeCallback from './express-callback';
 
 const BASE_URL = getBaseUrl();
 

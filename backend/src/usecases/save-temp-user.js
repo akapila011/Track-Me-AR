@@ -14,7 +14,9 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
         const tempUser = createTempUser(userData);
 
         // TODO: should it only use email, using id to ensure no collisions but might not be correct
+        console.log("Before exists record");
         const existsRecord = await usersTempDb.findByIdOrEmail(tempUser.getId(), tempUser.getEmail()); // both fields must be unique
+        console.log("exists Record ", existsRecord);
         if (existsRecord) {  // TODO: update expiration date and change verification code on found record
             response.statusCode = 200; // proceed
             response.message = "Verification code has been reset";

@@ -1,5 +1,3 @@
-import React from 'react';
-import MuiAlert from '@material-ui/lab/Alert';
 
 export function startLoader(self) {
     self.setState({isLoading: true});
@@ -16,8 +14,4 @@ export function showMessage(self, type, message, timeout = 3000) {
             setTimeout(() => {self.setState({message: "", messageType: ""});}, 3000)
         }
     });
-}
-
-export function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
 }

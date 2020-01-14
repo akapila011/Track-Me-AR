@@ -9,7 +9,10 @@ export function makeUsersTempDb ({ dbClient, TempUserModel }) {
     }
 
     async function findByIdOrEmail (id, email) {
-        return TempUserModel.findByIdOrEmail(id, email)
+        // return await TempUserModel.find({id: id, email: email}).exec(function(err, rec) {
+        //     consoloe.log("err, rec" , err, rec);
+        // });
+        return await TempUserModel.findByIdOrEmail(id, email);
     }
 
     async function insert (tempUser) {
@@ -27,12 +30,12 @@ export function makeUsersTempDb ({ dbClient, TempUserModel }) {
         return {result, tempUser};
     }
 
-    return Object.freeze({
+    return {
         findById,
         findByCode,
         findByIdOrEmail,
         insert,
         remove,
         update
-    });
+    };
 }

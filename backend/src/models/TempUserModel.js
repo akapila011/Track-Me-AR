@@ -18,16 +18,43 @@ TempUserSchema.virtual('name').get(function () {
 });
 
 // Queries
-TempUserSchema.statics.findById = function(id) {
-    return this.find({ id: id });
-};
+// TempUserSchema.statics.findById = function(id) {
+//     return this.find({ id: id });
+// };
+//
+// TempUserSchema.statics.findByCode = function(code) {
+//     return this.find({ code: code });
+// };
+//
+// TempUserSchema.statics.findByIdOrEmail = function (id, email) {
+//     return this.query.or([{id: id}, {email: email}]) ;
+// };
 
-TempUserSchema.statics.findByCode = function(code) {
-    return this.find({ code: code });
-};
+TempUserSchema.statics = {
+    findById(id) {
+        return this.find({id: id});
+    },
 
-TempUserSchema.statics.findByIdOrEmail = function(id, email) {
-    return this.query.or([{id: id}, {email: email}]) ;
+    findByCode(code) {
+        return this.find({code: code});
+    },
+
+    async findByIdOrEmail(id, email) {
+        // return this.query.or([{id: id}, {email: email}]);
+        let result = null;
+            await this.find({id: id}).exec(function(err, res) {
+            if (err) {
+                console.error("err ", err);
+                result = null;
+            }
+            else {
+                console.log("res ", res);
+                result = res;
+            }
+        });
+            return result;
+
+    },
 };
 
 export const TempUserModel = mongoose.model('TempUser', TempUserSchema);
