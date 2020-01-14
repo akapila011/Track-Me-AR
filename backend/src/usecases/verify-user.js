@@ -6,7 +6,7 @@ export function makeVerifyUser({usersTempDb, usersDb, createTempUser, createCred
             message: "Unknown Error: Check Logs"
         };
 
-        const tempUserRecord = usersTempDb.findByCode(userCode);
+        const tempUserRecord = await usersTempDb.findByCode(userCode);
         if (tempUserRecord == null) {
             response.statusCode = 404;
             response.message = "Verification code not found.";

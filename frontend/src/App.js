@@ -184,6 +184,9 @@ class SignUp extends Component {
         }).then((response) => {
             // console.log("signUpClicked response ", response);
             let data = response.data;
+            if (data.type === "success") {
+                showMessage(this, data.type, data.message);
+            }
         }).catch((error) => {
             console.error(error.message);
             console.log("got here");

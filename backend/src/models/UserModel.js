@@ -15,12 +15,29 @@ UserSchema.virtual('name').get(function () {
 });
 
 // Queries
-UserSchema.statics.findById = function(id) {
-    return this.find({ id: id });
+UserSchema.statics = {
+    findById(id) {
+        return this.find({id: id});
+    },
+
+    async findByIdOrEmail(id, email) {
+        let result = null;
+        await this.find().and([
+            {$or: [{id: id}, {email: email}]}
+        ]).exec(function(err, res) {
+            if (err) {
+                console.error("err ", err);
+                result = null;
+            }
+            else {
+                console.log("res ", res);
+                result = res;
+            }
+        });
+        return result;
+    },
+
 };
 
-UserSchema.statics.findByIdOrEmail = function(id, email) {
-    return this.query.or([{id: id}, {email: email}]) ;
-};
 
 export const UserModel = mongoose.model('User', UserSchema);

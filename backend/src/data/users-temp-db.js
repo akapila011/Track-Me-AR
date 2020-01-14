@@ -5,13 +5,10 @@ export function makeUsersTempDb ({ dbClient, TempUserModel }) {
     }
 
     async function findByCode (code) {
-        return TempUserModel.findByCode(code)
+        return await TempUserModel.findByCode(code)
     }
 
     async function findByIdOrEmail (id, email) {
-        // return await TempUserModel.find({id: id, email: email}).exec(function(err, rec) {
-        //     consoloe.log("err, rec" , err, rec);
-        // });
         return await TempUserModel.findByIdOrEmail(id, email);
     }
 

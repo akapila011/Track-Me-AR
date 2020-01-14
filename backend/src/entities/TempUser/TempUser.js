@@ -35,9 +35,9 @@ export function buildCreateTempUser({makeUser, dateValidator}) {
             getName: () => `${user.firstName} ${user.lastName}`,
             getEmail: () => user.email,
             getDateCreated: () => user.dateCreated,
-            getDateInserted: () => this.dateInserted,
-            getExpirationDate: () => this.expirationDate,
-            isExpired: (date) => {return date > this.expirationDate},
+            getDateInserted: () => dateInserted,
+            getExpirationDate: () => expirationDate,
+            isExpired: (date) => {return date > expirationDate},
             getCode: () => this.code,
         });
     }
