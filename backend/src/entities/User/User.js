@@ -24,13 +24,13 @@ export function buildCreateUser({idValidator, nameValidator, emailValidator, dat
             throw new Error(`User's date created value is invalid. ${validDateResult.message}`);
         }
 
-        return Object.freeze({
-            getId: () => this.id,
-            getFirstName: () => this.firstName,
-            getLastName: () => this.lastName,
-            getName: () => `${this.firstName} ${this.lastName}`,
-            getEmail: () => this.email,
-            getDateCreated: () => this.dateCreated
-        })
+        return {
+            getId: () => {return id;},
+            getFirstName: () => {return firstName;},
+            getLastName: () => {return lastName;},
+            getName: () => {return `${firstName} ${lastName}`},
+            getEmail: () => {return email;},
+            getDateCreated: () => {return dateCreated;}
+        };
     }
 }

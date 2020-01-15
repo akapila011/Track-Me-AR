@@ -9,16 +9,14 @@ import {CredentialModel} from '../models/CredentialModel';
 import {UserModel} from '../models/UserModel';
 import {TempUserModel} from '../models/TempUserModel';
 
-const MongoClient = mongodb.MongoClient;
-const url = process.env.DB_URL;
-const dbName = process.env.DB_NAME;
-const client = new MongoClient(url, { useNewUrlParser: true });
+// const MongoClient = mongodb.MongoClient;
+// const url = process.env.DB_URL;
+// const dbName = process.env.DB_NAME;
+// const client = new MongoClient(url, { useNewUrlParser: true });
 
-export async function makeDb () {
-    if (!client.isConnected()) {
-        await client.connect()
-    }
-    return client.db(dbName)
+
+export function makeDb () {
+    return null;
 }
 
 export const usersDb = makeUsersDb({makeDb, UserModel});

@@ -29,16 +29,16 @@ export function buildCreateTempUser({makeUser, dateValidator}) {
         }
 
         return Object.freeze({
-            getId: () => user.id,
-            getFirstName: () => user.firstName,
-            getLastName: () => user.lastName,
-            getName: () => `${user.firstName} ${user.lastName}`,
-            getEmail: () => user.email,
-            getDateCreated: () => user.dateCreated,
-            getDateInserted: () => dateInserted,
-            getExpirationDate: () => expirationDate,
+            getId: () => {return user.getId()},
+            getFirstName: () => {return user.getFirstName()},
+            getLastName: () => {return user.getLastName()},
+            getName: () => {return user.getName()},
+            getEmail: () => {return user.getEmail()},
+            getDateCreated: () => {return user.getDateCreated()},
+            getDateInserted: () => {return dateInserted},
+            getExpirationDate: () => {return expirationDate},
             isExpired: (date) => {return date > expirationDate},
-            getCode: () => this.code,
+            getCode: () => {return code;},
         });
     }
 }

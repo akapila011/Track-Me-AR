@@ -19,9 +19,9 @@ export function buildCreateCredential({passwordValidator, hashing}) {
         const pHash = hashing.generateHash(password, hashing.generateSalt());
 
         return Object.freeze({
-            getUserId: () => this.userId,
-            getSalt: () => this.salt,
-            getPHash: () => this.pHash,
+            getUserId: () => userId,
+            getSalt: () => salt,
+            getPHash: () => pHash,
         })
     }
 }
