@@ -36,35 +36,11 @@ TempUserSchema.statics = {
     },
 
     async findByCode(code) {
-        let result = null;
-        await this.find({code: code}).exec(function(err, res) {
-            if (err) {
-                console.error(err);
-                result = null;
-            } else {
-                result = res;
-            }
-        });
-        return result;
+        return await this.find({code: code}).exec();
     },
 
     async findByIdOrEmail(id, email) {
-        // return this.query.or([{id: id}, {email: email}]);
-        let result = null;
-            await this.find().and([
-                {$or: [{id: id}, {email: email}]}
-            ]).exec(function(err, res) {
-            if (err) {
-                console.error("err ", err);
-                result = null;
-            }
-            else {
-                console.log("res ", res);
-                result = res;
-            }
-        });
-            return result;
-
+        return await this.find({$or: [{id: id}, {email: email}]}).exec();
     },
 };
 

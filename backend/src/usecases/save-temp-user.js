@@ -15,13 +15,25 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
 
         // TODO: should it only use email, using id to ensure no collisions but might not be correct
         const existsRecord = await usersTempDb.findByIdOrEmail(tempUser.getId(), tempUser.getEmail()); // both fields must be unique
-        if (existsRecord) {  // TODO: update expiration date and change verification code on found record
-            response.statusCode = 200; // proceed
-            response.message = "Verification code has been reset";
+        if (existsRecord && existsRecord.length > 0) {  // TODO: update expiration date and change verification code on found record
+            const userToUpdate = {
+                id: tempUser.getId(),
+                firstName: tempUser.getFirstName(), // let user update these details if email same
+                lastName: tempUser.getLastName(),
+                email: tempUser.getEmail(),
+                dateCreated: existsRecord[0].dateCreated,
+                dateInserted: tempUser.getDateInserted(),  // latest dates
+                expirationDate: tempUser.getExpirationDate(),
+                code: validationCode
+            };
+
+            let updateResult = await usersTempDb.update(userToUpdate);
+            response.statusCode = updateResult.httpStatus;
+            response.message = updateResult.message;
             return response;
         }
         const existsUser = await usersDb.findByIdOrEmail(tempUser.getId(), tempUser.getEmail());
-        if (existsUser) {
+        if (existsUser && existsUser.length > 0) {
             response.statusCode = 409; // conflict
             response.message = `A user with email ${tempUser.getEmail()} has already been registered.`;
             return response;
@@ -29,7 +41,7 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
 
 
         const codeExists = await usersTempDb.findByCode(validationCode);  // TODO: try generate 10 times before failing
-        if (codeExists != null) {
+        if (codeExists && codeExists.length > 0) {
             response.statusCode = 409; // conflict
             response.message = "Validation Code already in use try registering again.";
             return response;
@@ -45,7 +57,7 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
             expirationDate: tempUser.getExpirationDate(),
             code: validationCode
         };
-        console.log("userToSave ", userToSave);
+        // console.log("userToSave ", userToSave);
 
         let saveResult = await usersTempDb.insert(userToSave);
 

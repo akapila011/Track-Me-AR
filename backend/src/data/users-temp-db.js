@@ -43,8 +43,21 @@ export function makeUsersTempDb ({ dbClient, TempUserModel }) {
     }
 
     async function update (tempUser) {
-        const result = await TempUserModel.updateOne(tempUser);
-        return {result, tempUser};
+        // const dbresult = await TempUserModel.updateOne(tempUser);
+        // let result = {};
+        // if (dbresult.ok === 1) {
+        //     result = {httpStatus: 200, message: "Registration already exists. Verification code has been reset"}
+        // } else {
+        //     result = {httpStatus: 500, message: "Could not update the record verification code at this time"}
+        // }
+        try {
+            let updateRes = await TempUserModel.updateOne(tempUser);
+            console.log("After update ", updateRes);
+            return {httpStatus: 200, message: "Registration already exists. Verification code has been reset"}
+        } catch (err) {
+            console.error("in my werr", err);
+            return {httpStatus: 500, message: "Could not update the record verification code at this time"}
+        }
     }
 
     async function remove (tempUser) {

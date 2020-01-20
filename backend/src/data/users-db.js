@@ -4,7 +4,7 @@ export function makeUsersDb ({ dbClient, UserModel }) {
         return UserModel.findById(id);
     }
     async function findByIdOrEmail (id, email) {
-        return UserModel.findByIdOrEmail(id, email)
+        return await UserModel.findByIdOrEmail(id, email)
     }
 
     async function insert (user) {
