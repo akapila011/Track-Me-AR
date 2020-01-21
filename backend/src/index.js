@@ -24,11 +24,11 @@ db.once('open', function() {
 
     app.get(`/`, (req, res) => {res.send('Hello World!');});
     app.post(`/signup`, makeCallback(userController.saveUserController));
-    app.get(`/verifyUser`, userController.verifyUserController);
+    app.post(`/verifyUser`, makeCallback(userController.verifyUserController));
 
     if (isDev()){
         app.listen(5000, () => {
-            console.log(`${new Date().toString()} Server is listening on port 5000`)
+            console.log(`[${new Date().toString()}] Server is listening on port 5000`)
         });
     }
 });

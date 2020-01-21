@@ -7,27 +7,27 @@ export function makeCreateCredential({credentialsDb, createCredential, usersDb})
         };
 
         const userAlreadyHasCredential = await credentialsDb.findByUserId(credential.getUserId());
-        if (userAlreadyHasCredential != null) {  // TODO: maybe go directly to update?
+        if (userAlreadyHasCredential && userAlreadyHasCredential.length > 0) {  // TODO: maybe go directly to update?
             response.statusCode = 400;
             response.message = "User has already set a password. Please try update the password.";
             return response;
         }
 
-        const userIsSaved = await usersDb.findByUserId(credential.getUserId());
-        if (userIsSaved == null) {
+        const userIsSaved = await usersDb.findById(credential.getUserId());
+        if (userIsSaved && userIsSaved.length < 1) {
             response.statusCode = 404;
             response.message = "User not found. Cannot save the credentials.";
             return response;
         }
 
-        credentialsDb.insert({
+        let result = await credentialsDb.insert({
             userId: credential.getUserId(),
             salt: credential.getSalt(),
             pHash: credential.getPHash(),
         });
 
-        response.statusCode = 200;
-        response.message = "Password has been saved.";
+        response.statusCode = result.httpStatus;
+        response.message = result.message;
         return response;
     }
 }

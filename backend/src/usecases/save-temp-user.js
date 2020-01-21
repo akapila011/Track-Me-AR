@@ -8,14 +8,14 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
             message: "Unknown Error: Check Logs"
         };
 
-        const validationCode = codeGenerator.alphaNumeric(6);
+        const validationCode = codeGenerator.alphaNumeric(6).toUpperCase();
         userData.id = !userData.id ? generateUUID(32) : userData.id;  // generate an id if non given
         userData.code = validationCode;
         const tempUser = createTempUser(userData);
 
         // TODO: should it only use email, using id to ensure no collisions but might not be correct
         const existsRecord = await usersTempDb.findByIdOrEmail(tempUser.getId(), tempUser.getEmail()); // both fields must be unique
-        if (existsRecord && existsRecord.length > 0) {  // TODO: update expiration date and change verification code on found record
+        if (existsRecord && existsRecord.length > 0) {  // TODO: extract to own usecase
             const userToUpdate = {
                 id: tempUser.getId(),
                 firstName: tempUser.getFirstName(), // let user update these details if email same

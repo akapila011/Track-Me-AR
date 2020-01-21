@@ -11,7 +11,11 @@ export function buildCreateTempUser({makeUser, dateValidator}) {
             throw new Error(`Validation insertion date is invalid. ${validInsertionDateResult.message}`);
         }
 
-        const validExpirationDateResult = dateValidator.isValidDate(dateInserted);
+        if (expirationDate == null) { //default to 20 minutes
+            expirationDate = new Date();
+            expirationDate = new Date(expirationDate.setMinutes(dateInserted.getMinutes() + 20));
+        }
+        const validExpirationDateResult = dateValidator.isValidDate(expirationDate);
         if (!validExpirationDateResult.valid) {
             throw new Error(`Validation expiration date is invalid. ${validExpirationDateResult.message}`);
         }

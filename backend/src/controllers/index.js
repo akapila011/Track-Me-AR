@@ -4,7 +4,7 @@ import {userService} from "../usecases"
 const {saveTempUser, verifyUser} = userService;
 
 const saveUserController = makeSaveTempUser({ saveTempUserUsecase: saveTempUser });
-const verifyUserController = makeVerifyUser({ verifyUser });
+const verifyUserController = makeVerifyUser({ verifyUserUsecase: verifyUser });
 
 export const userController = Object.freeze({
     saveUserController,

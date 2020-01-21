@@ -5,8 +5,13 @@ export function makeCredentialsDb ({ dbClient, CredentialModel }) {
         CredentialModel.findByUserId(userId);
     }
     async function insert (credential) {
-        const result = await CredentialModel.create(credential);
-        return {result, credential};
+        try {
+            let saveRes = await CredentialModel.create(credential);
+            return {httpStatus: 200, message: "Credential created."};
+        } catch (err) {
+            // console.error("in my werr", err);
+            return {httpStatus: 500, message: "Could not save credential at this time. " + err.message};
+        }
     }
 
     async function update (credential) {

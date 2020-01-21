@@ -5,9 +5,7 @@ export function makeSaveTempUser ({ saveTempUserUsecase }) {
         try {
             const userBody = httpRequest.body;
 
-            // console.log("userBody ", userBody);
             const response = await saveTempUserUsecase({firstName: userBody.firstName, lastName: userBody.lastName, email: userBody.email});
-            // console.log("response ", response);
             return {
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,15 +35,13 @@ export function makeVerifyUser ({ verifyUserUsecase: verifyUserEmailUsecase }) {
     return async function verifyUser (httpRequest) {
         try {
             const userBody = httpRequest.body;
-
-
-            const response = await verifyUserEmailUsecase({userBody});
+            const response = await verifyUserEmailUsecase({verificationCode: userBody.verificationCode, password: userBody.password});
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 statusCode: response.statusCode,
-                body: { message: response.message }
+                body: { type: statusCodeToType(response.statusCode), message: response.message }
             }
         } catch (e) {
             // TODO: Error logging
@@ -56,7 +52,8 @@ export function makeVerifyUser ({ verifyUserUsecase: verifyUserEmailUsecase }) {
                 },
                 statusCode: 400,
                 body: {
-                    error: e.message
+                    type: "error",
+                    message: e.message
                 }
             }
         }

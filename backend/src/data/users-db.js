@@ -1,15 +1,21 @@
 export function makeUsersDb ({ dbClient, UserModel }) {
     
     async function findById (id) {
-        return UserModel.findById(id);
+        return await UserModel.findById(id);
     }
+
     async function findByIdOrEmail (id, email) {
-        return await UserModel.findByIdOrEmail(id, email)
+        return await UserModel.findByIdOrEmail(id, email);
     }
 
     async function insert (user) {
-        const result = await UserModel.create(user);
-        return {result, user};
+        try {
+            let saveRes = await UserModel.create(user);
+            return {httpStatus: 200, message: "User has been saved."};
+        } catch (err) {
+            // console.error("in my werr", err);
+            return {httpStatus: 500, message: "Could not save at this time. " + err.message};
+        }
     }
 
     async function update (user) {

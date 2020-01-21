@@ -9,7 +9,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
 import ViewSession from "./components/ViewSession/ViewSession";
-import {SIGN_UP_URL} from "./util/urls";
+import {SIGN_UP_URL, VERIFY_USER_URL} from "./util/urls";
 import {showMessage, startLoader, stopLoader} from "./util/util";
 
 class App extends Component {
@@ -119,7 +119,7 @@ class NavBar extends Component {
                             </DialogActions>
                         </Dialog>
 
-                        <SignUp
+                        <SignUpDialog
                             showRegisterForm={this.state.showRegisterForm}
                             closeRegisterForm={this.closeRegisterForm.bind(this)}
                         />
@@ -159,17 +159,21 @@ class NavBar extends Component {
     }
 }
 
-class SignUp extends Component {
+class SignUpDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
             message: "",
             messageType: "",
+            view: "RegisterUser",
 
             firstName: "",
             lastName: "",
             email: "",
+
+            password: "",
+            verificationCode: "",
         }
     }
 
@@ -185,18 +189,50 @@ class SignUp extends Component {
             // console.log("signUpClicked response ", response);
             let data = response.data;
             if (data.type === "success") {
+                this.setState({view: "VerifyUser"});
                 showMessage(this, data.type, data.message);
             }
         }).catch((error) => {
             console.error(error.message);
-            console.log("got here");
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
-                console.log("and in if");
-
                 console.error(error.response.data.statusCode, error.response.data.message);
                 showMessage(this, error.response.data.type, error.response.data.message);
+                return;
             }
-            // showMessage(currentPageStore, "error", error.message);
+            showMessage(this, "error", error.message);
+        }).finally(() => {
+            stopLoader(this);
+        });  // end axios
+    }
+
+    verifyClicked() {
+        const sendData = {verificationCode: this.state.verificationCode, password: this.state.password};
+        if (!sendData.password || sendData.password.length < 8) {
+            showMessage(this, "warn", "Password must be at least 8 characters");
+            return;
+        }
+
+        startLoader(this);
+        axios({
+            method: "POST",
+            url: VERIFY_USER_URL,
+            timeout: 8000,
+            data: sendData,
+        }).then((response) => {
+            // console.log("verifyClicked response ", response);
+            let data = response.data;
+            if (data.type === "success") {
+                this.props.closeRegisterForm();
+                showMessage(this, data.type, data.message);
+            }
+        }).catch((error) => {
+            console.error(error.message);
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.error(error.response.data.statusCode, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
+                return;
+            }
+            showMessage(this, "error", error.message);
         }).finally(() => {
             stopLoader(this);
         });  // end axios
@@ -205,70 +241,110 @@ class SignUp extends Component {
     render() {
         return (
             <Dialog open={this.props.showRegisterForm} onClose={this.props.closeRegisterForm} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Sign Up</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Sign Up to get track sessions for much longer and log & export your tracking history. It is completely free!
-                    </DialogContentText>
-
-                        <Snackbar
-                            open={this.state.message}
-                            onClose={() => {this.setState({message: "", messageType: ""});}}
-                            message={this.state.message}
-                        />
-
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        helperText="You will use this email to login. You will be required to verify this email."
-                        id="email"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        value={this.state.email}
-                        onChange={(event) => {this.setState({email: event.target.value});}}
-                    />
-                    <TextField
-                        required
-                        margin="dense"
-                        id="firstName"
-                        label="First Name"
-                        type="text"
-                        halfWidth
-                        value={this.state.firstName}
-                        onChange={(event) => {this.setState({firstName: event.target.value});}}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="lastName"
-                        label="Last Name"
-                        type="text"
-                        halfWidth
-                        value={this.state.lastName}
-                        onChange={(event) => {this.setState({lastName: event.target.value});}}
-                    />
-                    {/*<TextField*/}
-                        {/*required*/}
-                        {/*margin="dense"*/}
-                        {/*id="password"*/}
-                        {/*label="Password"*/}
-                        {/*type="password"*/}
-                        {/*fullWidth*/}
-                    {/*/>*/}
-                </DialogContent>
+                <Snackbar
+                    open={this.state.message}
+                    onClose={() => {this.setState({message: "", messageType: ""});}}
+                    message={this.state.message}
+                />
                 {
-                    this.state.isLoading &&
+                    this.state.view === "RegisterUser" &&
+                    <div>
+                        <DialogTitle id="form-dialog-title">Sign Up</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Sign Up to get track sessions for much longer and log & export your tracking history. It is completely free!
+                            </DialogContentText>
+
+                            <TextField
+                                autoFocus
+                                required
+                                margin="dense"
+                                helperText="You will use this email to login. You will be required to verify this email."
+                                id="email"
+                                label="Email Address"
+                                type="email"
+                                fullWidth
+                                value={this.state.email}
+                                onChange={(event) => {this.setState({email: event.target.value});}}
+                            />
+                            <TextField
+                                required
+                                margin="dense"
+                                id="firstName"
+                                label="First Name"
+                                type="text"
+                                halfWidth
+                                value={this.state.firstName}
+                                onChange={(event) => {this.setState({firstName: event.target.value});}}
+                            />
+                            <TextField
+                                margin="dense"
+                                id="lastName"
+                                label="Last Name"
+                                type="text"
+                                halfWidth
+                                value={this.state.lastName}
+                                onChange={(event) => {this.setState({lastName: event.target.value});}}
+                            />
+                        </DialogContent>
+                    </div>
+                }
+                {
+                    this.state.view === "VerifyUser" &&
+                    <div>
+                        <DialogTitle id="form-dialog-title">Confirm Email</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Enter the verification code sent to <span style={{fontWeight: "bold"}}>{this.state.email}</span> to finish sign-up.
+                            </DialogContentText>
+
+                            <TextField
+                                autoFocus
+                                required
+                                margin="dense"
+                                helperText="Enter the verification code sent to your email"
+                                id="verificationCode"
+                                label="Verification Code"
+                                type="text"
+                                fullWidth
+                                maxLength={10}
+                                placeholder={"e.g. A123B7Y"}
+                                value={this.state.verificationCode}
+                                onChange={(event) => {this.setState({verificationCode: event.target.value});}}
+                            />
+                            <TextField
+                                required
+                                margin="dense"
+                                id="password"
+                                label="Password"
+                                type="password"
+                                fullWidth
+                                value={this.state.password}
+                                onChange={(event) => {this.setState({password: event.target.value});}}
+                            />
+                        </DialogContent>
+                    </div>
+                }
+                {
+                    this.props.isLoading &&
                     <LinearProgress />
                 }
-
                 <DialogActions>
                     <Button onClick={this.props.closeRegisterForm} color="secondary" disabled={this.state.isLoading}>
                         Cancel
                     </Button>
-                    <Button onClick={this.signUpClicked.bind(this)} color="primary" disabled={this.state.isLoading}>
-                        Sign Up
-                    </Button>
+                    {
+                        this.state.view === "RegisterUser" &&
+                        <Button onClick={this.signUpClicked.bind(this)} color="primary" disabled={this.state.isLoading}>
+                            Sign Up
+                        </Button>
+                    }
+                    {
+                        this.state.view === "VerifyUser" &&
+                        <Button onClick={this.verifyClicked.bind(this)} color="primary" disabled={this.state.isLoading}>
+                            Verify & Finish
+                        </Button>
+                    }
                 </DialogActions>
             </Dialog>
         )
