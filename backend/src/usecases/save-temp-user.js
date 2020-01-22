@@ -8,29 +8,15 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
             message: "Unknown Error: Check Logs"
         };
 
-        const validationCode = codeGenerator.alphaNumeric(6).toUpperCase();
+        const verificationCode = codeGenerator.alphaNumeric(6).toUpperCase();
         userData.id = !userData.id ? generateUUID(32) : userData.id;  // generate an id if non given
-        userData.code = validationCode;
+        userData.code = verificationCode;
         const tempUser = createTempUser(userData);
 
         // TODO: should it only use email, using id to ensure no collisions but might not be correct
         const existsRecord = await usersTempDb.findByIdOrEmail(tempUser.getId(), tempUser.getEmail()); // both fields must be unique
-        if (existsRecord && existsRecord.length > 0) {  // TODO: extract to own usecase
-            const userToUpdate = {
-                id: tempUser.getId(),
-                firstName: tempUser.getFirstName(), // let user update these details if email same
-                lastName: tempUser.getLastName(),
-                email: tempUser.getEmail(),
-                dateCreated: existsRecord[0].dateCreated,
-                dateInserted: tempUser.getDateInserted(),  // latest dates
-                expirationDate: tempUser.getExpirationDate(),
-                code: validationCode
-            };
-
-            let updateResult = await usersTempDb.update(userToUpdate);
-            response.statusCode = updateResult.httpStatus;
-            response.message = updateResult.message;
-            return response;
+        if (existsRecord && existsRecord.length > 0) {
+            return await updateUserVerificationCode(tempUser, existsRecord[0], verificationCode, usersTempDb)
         }
         const existsUser = await usersDb.findByIdOrEmail(tempUser.getId(), tempUser.getEmail());
         if (existsUser && existsUser.length > 0) {
@@ -40,7 +26,7 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
         }
 
 
-        const codeExists = await usersTempDb.findByCode(validationCode);  // TODO: try generate 10 times before failing
+        const codeExists = await usersTempDb.findByCode(verificationCode);  // TODO: try generate 10 times before failing
         if (codeExists && codeExists.length > 0) {
             response.statusCode = 409; // conflict
             response.message = "Validation Code already in use try registering again.";
@@ -55,7 +41,7 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
             dateCreated: tempUser.getDateCreated(),
             dateInserted: tempUser.getDateInserted(),
             expirationDate: tempUser.getExpirationDate(),
-            code: validationCode
+            code: verificationCode
         };
         // console.log("userToSave ", userToSave);
 
@@ -65,4 +51,29 @@ export function makeSaveTempUser({usersTempDb, codeGenerator, usersDb}) {
         response.message = saveResult.message;
         return response;
     }
+}
+
+async function updateUserVerificationCode(tempUser, foundRecord, verificationCode, usersTempDb) {
+    const response = {
+        statusCode: 500,
+        message: "Unknown Error: Check Logs"
+    };
+
+
+    const userToUpdate = {
+        id: tempUser.getId(),
+        firstName: tempUser.getFirstName(), // let user update these details if email same
+        lastName: tempUser.getLastName(),
+        email: tempUser.getEmail(),
+        dateCreated: foundRecord.dateCreated,
+        dateInserted: tempUser.getDateInserted(),  // latest dates
+        expirationDate: tempUser.getExpirationDate(),
+        code: verificationCode
+    };
+
+    let updateResult = await usersTempDb.update(userToUpdate);
+    response.statusCode = updateResult.httpStatus;
+    response.message = updateResult.message;
+    return response;
+
 }

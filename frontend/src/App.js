@@ -48,6 +48,9 @@ class NavBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            messageType: "",
+            message: "",
+
             menuAnchor: null,
         }
     }
@@ -84,6 +87,12 @@ class NavBar extends Component {
                             </Link>
                         </Grid>
 
+                        <Snackbar
+                            open={this.state.message}
+                            onClose={() => {this.setState({message: "", messageType: ""});}}
+                            message={this.state.message}
+                        />
+
                         <Dialog open={this.state.showSignInForm} onClose={this.closeSignInForm.bind(this)} aria-labelledby="form-dialog-title">
                             <DialogTitle id="form-dialog-title">Sign In</DialogTitle>
                             <DialogContent>
@@ -119,10 +128,15 @@ class NavBar extends Component {
                             </DialogActions>
                         </Dialog>
 
-                        <SignUpDialog
-                            showRegisterForm={this.state.showRegisterForm}
-                            closeRegisterForm={this.closeRegisterForm.bind(this)}
-                        />
+                        {
+                            this.state.showRegisterForm &&
+                            <SignUpDialog
+                                showRegisterForm={this.state.showRegisterForm}
+                                closeRegisterForm={this.closeRegisterForm.bind(this)}
+                                showMessage={(type, message) => {showMessage(this, type, message)}}
+                            />
+                        }
+
 
                         {   !isLoggedIn &&
                         <Grid item >
@@ -223,7 +237,7 @@ class SignUpDialog extends Component {
             let data = response.data;
             if (data.type === "success") {
                 this.props.closeRegisterForm();
-                showMessage(this, data.type, data.message);
+                this.props.showMessage(this, data.type, data.message);
             }
         }).catch((error) => {
             console.error(error.message);
@@ -240,7 +254,9 @@ class SignUpDialog extends Component {
 
     render() {
         return (
-            <Dialog open={this.props.showRegisterForm} onClose={this.props.closeRegisterForm} aria-labelledby="form-dialog-title">
+            <Dialog open={this.props.showRegisterForm}
+                    onClose={this.props.closeRegisterForm}
+                    aria-labelledby="form-dialog-title">
                 <Snackbar
                     open={this.state.message}
                     onClose={() => {this.setState({message: "", messageType: ""});}}

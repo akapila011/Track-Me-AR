@@ -45,8 +45,12 @@ export function makeVerifyUser({usersTempDb, usersDb, createTempUser, createCred
         if (saveResult.httpStatus === 200) {
             try {  // TODO: handle deleting tempUser record
                 const result = await saveCredential(credential);
-                console.log("result dfdfdsfgsd ", result)
                 if (result.statusCode === 200) {
+                    try {  // delete record
+                        usersTempDb.remove(tempUserRecord[0]);  // remove old record for signup, async but let it finish after response
+                    } catch (e) {
+                        console.error(e.message);
+                    }
                     response.statusCode = 200;
                     response.message = "Account is setup. You can now login with your password.";
                     return response;
@@ -66,7 +70,5 @@ export function makeVerifyUser({usersTempDb, usersDb, createTempUser, createCred
             response.message = `The user could not be saved at this time. Try again later.`;
             return response;
         }
-
-
     }
 }
