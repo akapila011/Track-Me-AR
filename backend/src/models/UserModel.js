@@ -16,12 +16,16 @@ UserSchema.virtual('name').get(function () {
 
 // Queries
 UserSchema.statics = {
-    findById(id) {
-        return this.find({id: id});
+    async findById(id) {
+        return await this.find({id: id});
     },
 
     async findByIdOrEmail(id, email) {
         return await this.find({$or: [{id: id}, {email: email}]}).exec();
+    },
+
+    async findByEmail(email) {
+        return await this.find({email: email}).limit(1).exec();
     },
 
 };

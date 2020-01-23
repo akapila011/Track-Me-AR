@@ -25,6 +25,7 @@ db.once('open', function() {
     app.get(`/`, (req, res) => {res.send('Hello World!');});
     app.post(`/signup`, makeCallback(userController.saveUserController));
     app.post(`/verifyUser`, makeCallback(userController.verifyUserController));
+    app.post(`/signin`, makeCallback(userController.signinUserController));
 
     if (isDev()){
         app.listen(5000, () => {

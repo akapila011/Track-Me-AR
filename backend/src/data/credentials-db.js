@@ -2,7 +2,7 @@ export function makeCredentialsDb ({ dbClient, CredentialModel }) {
     const collectionName = "credentials";
 
     async function findByUserId (userId) {
-        CredentialModel.findByUserId(userId);
+        return await CredentialModel.findByUserId(userId);
     }
     async function insert (credential) {
         try {

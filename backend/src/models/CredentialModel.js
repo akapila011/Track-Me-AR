@@ -8,8 +8,11 @@ const CredentialSchema = new Schema({
 });
 
 // Queries
-CredentialSchema.statics.findByUserId = function(userId) {
-    return this.find({ userId: userId });
+
+CredentialSchema.statics = {
+    async findByUserId(userId) {
+        return await this.find({userId: userId}).limit(1).exec();
+    },
 };
 
 

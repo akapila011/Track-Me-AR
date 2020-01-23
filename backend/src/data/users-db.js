@@ -1,11 +1,15 @@
 export function makeUsersDb ({ dbClient, UserModel }) {
     
-    async function findById (id) {
+    async function findById(id) {
         return await UserModel.findById(id);
     }
 
-    async function findByIdOrEmail (id, email) {
+    async function findByIdOrEmail(id, email) {
         return await UserModel.findByIdOrEmail(id, email);
+    }
+
+    async function findByEmail(email) {
+        return await UserModel.findByEmail(email);
     }
 
     async function insert (user) {
@@ -29,6 +33,7 @@ export function makeUsersDb ({ dbClient, UserModel }) {
     return Object.freeze({
         findById,
         findByIdOrEmail,
+        findByEmail,
         insert,
         remove,
         update
