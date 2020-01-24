@@ -9,7 +9,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
 import ViewSession from "./components/ViewSession/ViewSession";
-import {SIGN_UP_URL, VERIFY_USER_URL} from "./util/urls";
+import {SIGN_IN_URL, SIGN_UP_URL, VERIFY_USER_URL} from "./util/urls";
 import {showMessage, startLoader, stopLoader} from "./util/util";
 
 class App extends Component {
@@ -22,6 +22,14 @@ class App extends Component {
         };
     }
 
+    setGlobalLoggedInDetails(userId, name, email) {
+        this.setState({
+            userId: userId,
+            name: name,
+            email: email
+        })
+    }
+
     render() {
         return (
             <BrowserRouter>
@@ -29,6 +37,7 @@ class App extends Component {
                     userId={this.state.userId}
                     email={this.state.email}
                     name={this.state.name}
+                    setGlobalLoggedInDetails={this.setGlobalLoggedInDetails.bind(this)}
                 />
 
                 <Grid>
@@ -93,40 +102,15 @@ class NavBar extends Component {
                             message={this.state.message}
                         />
 
-                        <Dialog open={this.state.showSignInForm} onClose={this.closeSignInForm.bind(this)} aria-labelledby="form-dialog-title">
-                            <DialogTitle id="form-dialog-title">Sign In</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Sign to enjoy an enhanced experience.
-                                </DialogContentText>
-                                <TextField
-                                    autoFocus
-                                    required
-                                    margin="dense"
-                                    id="email"
-                                    label="Email Address"
-                                    type="email"
-                                    fullWidth
-                                />
-                                <TextField
-                                    required
-                                    margin="dense"
-                                    id="password"
-                                    label="Password"
-                                    type="password"
-                                    fullWidth
-                                />
-                            </DialogContent>
-                            <LinearProgress />
-                            <DialogActions>
-                                <Button onClick={this.closeSignInForm.bind(this)} color="secondary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={this.closeSignInForm.bind(this)} color="primary">
-                                    Sign In
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        {
+                            this.state.showSignInForm &&
+                            <SignInDialog
+                                showSignInForm={this.state.showSignInForm}
+                                closeSignInForm={this.closeSignInForm.bind(this)}
+                                showMessage={(type, message) => {showMessage(this, type, message)}}
+                                setGlobalLoggedInDetails={this.props.setGlobalLoggedInDetails}
+                            />
+                        }
 
                         {
                             this.state.showRegisterForm &&
@@ -170,6 +154,95 @@ class NavBar extends Component {
                 </Toolbar>
             </AppBar>
         );
+    }
+}
+
+class SignInDialog extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false,
+            message: "",
+            messageType: "",
+
+            email: "",
+            password: "",
+        }
+    }
+
+    signInClicked() {
+        startLoader(this);
+        const sendData = {email: this.state.email, password: this.state.password};
+        axios({
+            method: "POST",
+            url: SIGN_IN_URL,
+            timeout: 10000,
+            data: sendData,
+        }).then((response) => {
+            // console.log("signInClicked response ", response);
+            let data = response.data;
+            if (data.type === "success") {
+                this.props.setGlobalLoggedInDetails(data.userId, data.name, data.email);
+                this.props.closeSignInForm();
+                this.props.showMessage(data.type, data.message);
+            }
+        }).catch((error) => {
+            console.error(error.message);
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.error(error.response.data.statusCode, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
+                return;
+            }
+            showMessage(this, "error", error.message);
+        }).finally(() => {
+            stopLoader(this);
+        });  // end axios
+    }
+
+    render() {
+        return (
+            <Dialog open={this.props.showSignInForm} onClose={this.props.closeSignInForm} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Sign In</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Sign to enjoy an enhanced experience.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        required
+                        margin="dense"
+                        id="email"
+                        label="Email Address"
+                        type="email"
+                        fullWidth
+                        value={this.state.email}
+                        onChange={(event) => {this.setState({email: event.target.value});}}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="password"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        value={this.state.password}
+                        onChange={(event) => {this.setState({password: event.target.value});}}
+                    />
+                </DialogContent>
+                {
+                    this.state.isLoading &&
+                    <LinearProgress />
+                }
+                <DialogActions>
+                    <Button onClick={this.props.closeSignInForm} color="secondary" disabled={this.state.isLoading}>
+                        Cancel
+                    </Button>
+                    <Button onClick={this.signInClicked.bind(this)} color="primary" disabled={this.state.isLoading}>
+                        Sign In
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        )
     }
 }
 
@@ -237,7 +310,7 @@ class SignUpDialog extends Component {
             let data = response.data;
             if (data.type === "success") {
                 this.props.closeRegisterForm();
-                this.props.showMessage(this, data.type, data.message);
+                this.props.showMessage(data.type, data.message);
             }
         }).catch((error) => {
             console.error(error.message);

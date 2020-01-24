@@ -30,11 +30,13 @@ export function makeSignInUserUsecase({usersDb, credentialsDb, hashing}) {
             return response;
         }
 
-
-
         response.statusCode = 200; // created
         response.message = "Successfully logged in";
         response.cookies = {userId: user.id}; // key-values to be converted in to cookies
+
+        response.userId = user.id;
+        response.name = user.name;
+        response.email = user.email;
         return response;
     }
 }

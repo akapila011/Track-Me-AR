@@ -65,14 +65,13 @@ export function makeSigninUser({ signinUserUsecase }) {
         try {
             const userBody = httpRequest.body;
             const response = await signinUserUsecase({email: userBody.email, password: userBody.password});
-            // const response = await signinUserUsecase({email: "abhzkapila999@gmail.com", password: "password1"});
 
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 statusCode: response.statusCode,
-                body: { type: statusCodeToType(response.statusCode), message: response.message },
+                body: { type: statusCodeToType(response.statusCode), message: response.message, userId: response.userId, name: response.name, email: response.email },
                 cookies: response.cookies
             }
         } catch (e) {
