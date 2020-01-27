@@ -4,7 +4,6 @@ import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import AdjustIcon from '@material-ui/icons/Adjust';
-import {geolocated} from 'react-geolocated';
 import Map from 'pigeon-maps'
 import Marker from 'pigeon-marker'
 import Overlay from 'pigeon-overlay'
@@ -12,7 +11,7 @@ import Overlay from 'pigeon-overlay'
 import mapPlaceholder from "../../assets/images/map-placeholder.jpg";
 import arPlaceholder from "../../assets/images/ar-placeholder.png";
 
-class ViewTrackingChild extends Component {
+export class ViewTracking extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,7 +20,7 @@ class ViewTrackingChild extends Component {
     }
 
     render() {
-        const isGeolocationAvailable = this.props.isGeolocationAvailable;
+        const isGeolocationAvailable = false;
         const coords = this.props.coords;
 
         const center = coords && coords.latitude && coords.longitude ? [coords.latitude, coords.longitude]: [-1.272007, 36.81425];
@@ -84,10 +83,3 @@ class ViewTrackingChild extends Component {
         )
     }
 }
-
-export const ViewTracking = geolocated({
-    positionOptions: {
-        enableHighAccuracy: true,
-    },
-    userDecisionTimeout: 5000,
-})(ViewTrackingChild);
