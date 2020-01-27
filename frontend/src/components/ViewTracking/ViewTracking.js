@@ -10,18 +10,37 @@ import Overlay from 'pigeon-overlay'
 
 import mapPlaceholder from "../../assets/images/map-placeholder.jpg";
 import arPlaceholder from "../../assets/images/ar-placeholder.png";
+import {isGeolocationAvailable, setCoords} from "../../geolocation/geolocation";
 
 export class ViewTracking extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            view: "map"  // map or ar
+            view: "map",  // map or ar
+
+            isGeolocationAvailable: false,
+            coords: {}, // latitude & longitude
         };
     }
 
+    componentDidMount() {
+        if (isGeolocationAvailable()) {
+            this.setState({isGeolocationAvailable: true});
+            navigator.geolocation.getCurrentPosition((position) => {
+                const latitude  = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                setCoords(this, latitude, longitude);
+            }, (error) => {
+                console.log("geo err ", error);
+            });
+        }
+    }
+
+
+
     render() {
-        const isGeolocationAvailable = false;
-        const coords = this.props.coords;
+        const isGeolocationAvailable = this.state.isGeolocationAvailable;
+        const coords = this.state.coords;
 
         const center = coords && coords.latitude && coords.longitude ? [coords.latitude, coords.longitude]: [-1.272007, 36.81425];
         // console.log("center ", center);
