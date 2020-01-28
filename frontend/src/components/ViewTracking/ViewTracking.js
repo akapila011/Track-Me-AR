@@ -10,7 +10,7 @@ import Overlay from 'pigeon-overlay'
 
 import mapPlaceholder from "../../assets/images/map-placeholder.jpg";
 import arPlaceholder from "../../assets/images/ar-placeholder.png";
-import {isGeolocationAvailable, setCoords} from "../../geolocation/geolocation";
+import {isGeolocationAvailable, setCoords} from "../../util/util";
 
 export class ViewTracking extends Component {
     constructor(props) {

@@ -10,7 +10,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
 import ViewSession from "./components/ViewSession/ViewSession";
 import {SIGN_IN_URL, SIGN_UP_URL, VERIFY_USER_URL} from "./util/urls";
-import {showMessage, startLoader, stopLoader} from "./util/util";
+import {loadIdentityToState, setIdentity, showMessage, startLoader, stopLoader} from "./util/util";
 
 class App extends Component {
     constructor(props) {
@@ -22,12 +22,18 @@ class App extends Component {
         };
     }
 
+    componentDidMount() {
+        loadIdentityToState(this);
+    }
+
     setGlobalLoggedInDetails(userId, name, email) {
         this.setState({
             userId: userId,
             name: name,
             email: email
-        })
+        }, () => {
+            setIdentity(userId, name, email);
+        });
     }
 
     render() {
