@@ -1,5 +1,5 @@
 
-export function makeSignInUserUsecase({usersDb, credentialsDb, hashing}) {
+export function makeSignInUserUsecase({usersDb, credentialsDb, hashing, jwtSign, jwtSecretKey}) {
     return async function signInUser({email, password}) {
         const response = {
             statusCode: 500,
@@ -32,7 +32,8 @@ export function makeSignInUserUsecase({usersDb, credentialsDb, hashing}) {
 
         response.statusCode = 200; // created
         response.message = "Successfully logged in";
-        response.cookies = {userId: user.id}; // key-values to be converted in to cookies
+        // response.cookies = {userId: user.id}; // key-values to be converted in to cookies
+        response.jwt = jwtSign.sign({userId: user.id}, jwtSecretKey); // TODO: to encrypt payload
 
         response.userId = user.id;
         response.name = user.name;

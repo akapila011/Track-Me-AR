@@ -21,3 +21,7 @@ export function isProd() {
 export function getBaseUrl() {
     return process.env.BASE_URL;
 }
+
+export function getJwtSecretKey() {
+    return process.env.JWT_SECRET_KEY;
+}

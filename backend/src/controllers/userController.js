@@ -65,14 +65,22 @@ export function makeSigninUser({ signinUserUsecase }) {
         try {
             const userBody = httpRequest.body;
             const response = await signinUserUsecase({email: userBody.email, password: userBody.password});
-
+            if (!response.jwt) {
+                throw new Error("Could not generate token for sign-in access");
+            }
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 statusCode: response.statusCode,
-                body: { type: statusCodeToType(response.statusCode), message: response.message, userId: response.userId, name: response.name, email: response.email },
-                cookies: response.cookies
+                body: { type: statusCodeToType(response.statusCode),
+                    message: response.message,
+                    userId: response.userId,
+                    name: response.name,
+                    email: response.email,
+                    jwt: response.jwt
+                },
+                // cookies: response.cookies
             }
         } catch (e) {
             // TODO: Error logging
