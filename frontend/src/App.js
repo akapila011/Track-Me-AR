@@ -10,7 +10,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
 import ViewSession from "./components/ViewSession/ViewSession";
 import {SIGN_IN_URL, SIGN_UP_URL, VERIFY_USER_URL} from "./util/urls";
-import {loadIdentityToState, setIdentity, showMessage, startLoader, stopLoader} from "./util/util";
+import {loadIdentityToState, removeIdentity, setIdentity, showMessage, startLoader, stopLoader} from "./util/util";
 
 class App extends Component {
     constructor(props) {
@@ -26,14 +26,20 @@ class App extends Component {
         loadIdentityToState(this);
     }
 
-    setGlobalLoggedInDetails(userId, name, email) {
+    setGlobalLoggedInDetails(userId, name, email, jwt) {
         this.setState({
             userId: userId,
             name: name,
             email: email
         }, () => {
-            setIdentity(userId, name, email);
+            setIdentity(userId, name, email, jwt);
         });
+    }
+
+    clearGlobalLoggedInDetails() {
+        this.setState({userId: "", name: "", email: ""}, () =>{
+            removeIdentity();
+        })
     }
 
     render() {
@@ -44,6 +50,7 @@ class App extends Component {
                     email={this.state.email}
                     name={this.state.name}
                     setGlobalLoggedInDetails={this.setGlobalLoggedInDetails.bind(this)}
+                    clearGlobalLoggedInDetails={this.clearGlobalLoggedInDetails.bind(this)}
                 />
 
                 <Grid>
@@ -75,7 +82,9 @@ class NavBar extends Component {
     }
 
     handleClose() {
-        this.setState({menuAnchor: null});
+        this.setState({menuAnchor: null}, () => {
+            this.props.clearGlobalLoggedInDetails();
+        });
     }
 
     closeSignInForm() {
@@ -188,7 +197,7 @@ class SignInDialog extends Component {
             // console.log("signInClicked response ", response);
             let data = response.data;
             if (data.type === "success") {
-                this.props.setGlobalLoggedInDetails(data.userId, data.name, data.email);
+                this.props.setGlobalLoggedInDetails(data.userId, data.name, data.email, data.jwt);
                 this.props.closeSignInForm();
                 this.props.showMessage(data.type, data.message);
             }

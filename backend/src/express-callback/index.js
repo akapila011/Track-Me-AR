@@ -30,7 +30,7 @@ module.exports = function makeExpressCallabck (controller) {
       })
       .catch(e => {
           // console.log("in catch ", e)
-          res.status(500).send({ type: "error", message: 'An unkown error occurred.' })
+          res.status(500).send({ type: "error", message: 'An unknown error occurred.' })
       });
   }
 }

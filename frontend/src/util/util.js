@@ -24,8 +24,16 @@ export function setCoords(self, latitude, longitude) {
     self.setState({coords: {latitude: latitude, longitude: longitude}});
 }
 
-export function setIdentity(userId, name, email) {
-    window.localStorage.setItem("identity", JSON.stringify({userId, name, email}));
+export function setIdentity(userId, name, email, jwt) {
+    window.localStorage.setItem("identity", JSON.stringify({userId, name, email, jwt}));
+}
+
+export function getJwt() {
+    const identityString = window.localStorage.getItem("identity");
+    if (identityString) {
+        const identity = JSON.parse(identityString);
+        return identity.jwt;
+    }
 }
 
 export function removeIdentity() {
@@ -37,7 +45,7 @@ export function loadIdentityToState(self) {
     if (identityString) {
         const identity = JSON.parse(identityString);
         if (identity.userId && identity.name && identity.email) {
-            self.setState(identity); // TODO: don't unpack?
+            self.setState({userId: identity.userId, name: identity.name, email: identity.email});
         }
     }
 }
