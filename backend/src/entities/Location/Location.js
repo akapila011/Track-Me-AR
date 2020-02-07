@@ -11,7 +11,7 @@ export function buildCreateLocation() {
             throw new Error("Latitude must be between 90(N) and -90(S)");
         }
 
-        if (longitude > 180.0 || latitude < -180.0) {
+        if (longitude > 180.0 || longitude < -180.0) {
             throw new Error("Latitude must be between 180(W) and -180(E)");
         }
 

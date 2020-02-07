@@ -9,7 +9,7 @@ describe('Entities: createTempUser', () => {
         const dateCreated = new Date();
         const expirationDate = new Date();
         const tempUser = {
-            id: "01234567890123456789012345678901", firstName: "First name", lastName: "Last name",
+            id: "01234567890123456789012345678901abcdef", firstName: "First name", lastName: "Last name",
             email: "example@domain.com", dateCreated: dateCreated, dateInserted: null, expirationDate: expirationDate,
             code: "123456"
         };
@@ -20,7 +20,7 @@ describe('Entities: createTempUser', () => {
         const dateCreated = new Date();
         const dateInserted = new Date();
         const tempUser = {
-            id: "01234567890123456789012345678901", firstName: "First name", lastName: "Last name",
+            id: "01234567890123456789012345678901abcdef", firstName: "First name", lastName: "Last name",
             email: "example@domain.com", dateCreated: dateCreated, dateInserted: dateInserted, expirationDate: null,
             code: "123456"
         };
@@ -32,7 +32,7 @@ describe('Entities: createTempUser', () => {
         const dateInserted = new Date();
         const expirationDate = dateInserted;
         const tempUser = {
-            id: "01234567890123456789012345678901", firstName: "First name", lastName: "Last name",
+            id: "012345678901234567890123456789abcdef", firstName: "First name", lastName: "Last name",
             email: "example@domain.com", dateCreated: dateCreated, dateInserted: dateInserted, expirationDate: expirationDate,
             code: "123456"
         };
@@ -44,7 +44,7 @@ describe('Entities: createTempUser', () => {
         const dateInserted = new Date();
         const expirationDate = dateInserted + 1000;
         const tempUser = {
-            id: "01234567890123456789012345678901", firstName: "First name", lastName: "Last name",
+            id: "012345678901234567890123456789abcdef", firstName: "First name", lastName: "Last name",
             email: "example@domain.com", dateCreated: dateCreated, dateInserted: dateInserted, expirationDate: expirationDate,
             code: "12345"
         };
@@ -54,9 +54,10 @@ describe('Entities: createTempUser', () => {
     it('Temp User succesfully created', () => {
         const dateCreated = new Date();
         const dateInserted = new Date();
-        const expirationDate = dateInserted + 1000;
+        let expirationDate = new Date();
+        expirationDate = new Date(expirationDate.setMinutes(dateInserted.getMinutes() + 20));
         const tempUser = {
-            id: "01234567890123456789012345678901", firstName: "First name", lastName: "Last name",
+            id: "012345678901234567890123456789abcdef", firstName: "First name", lastName: "Last name",
             email: "example@domain.com", dateCreated: dateCreated, dateInserted: dateInserted, expirationDate: expirationDate,
             code: "123456"
         };
