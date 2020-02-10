@@ -1,6 +1,6 @@
 import {isNumber, isValidDate} from "../../util/util";
 
-export function buildCreateLocation() {
+export function buildCreateLocation({trackingIdValidator}) {
     return function createCredential({latitude, longitude, time = new Date(), trackingId}) {
 
         if (!isNumber(latitude) || !isNumber(longitude)) {
@@ -15,7 +15,10 @@ export function buildCreateLocation() {
             throw new Error("Latitude must be between 180(W) and -180(E)");
         }
 
-        // TODO: validate trackingId based on length once tracking session created, dependency to be injected for checking that
+        const validIdResult = trackingIdValidator.isValidUUID(trackingId);
+        if (!validIdResult.valid) {
+            throw new Error(validIdResult.message);
+        }
 
         return Object.freeze({
             getLatitude: () => latitude,

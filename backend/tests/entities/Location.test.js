@@ -7,13 +7,13 @@ describe('Entities: createLocation', () => {
     });
     it('Invalid types for latitude/longtiude', () => {
         const location = {
-            latitude: "1.23", longitude: "4.56", time: new Date(), trackingId: ""
+            latitude: "1.23", longitude: "4.56", time: new Date(), trackingId: "012345678901234567890123456789abcdef"
         };
         expect(() => {createLocation(location)}).toThrow();
     });
     it('Latitude must be between 90 & -90', () => {
         const location = {
-            latitude: -100, longitude: 0, time: new Date(), trackingId: ""
+            latitude: -100, longitude: 0, time: new Date(), trackingId: "012345678901234567890123456789abcdef"
         };
         expect(() => {createLocation(location)}).toThrow();
         location.latitude = 100;
@@ -22,15 +22,23 @@ describe('Entities: createLocation', () => {
 
     it('Longitude must be between 180 & -180', () => {
         const location = {
-            latitude: 0, longitude: -200, time: new Date(), trackingId: ""
+            latitude: 0, longitude: -200, time: new Date(), trackingId: "012345678901234567890123456789abcdef"
         };
         expect(() => {createLocation(location)}).toThrow();
         location.longitude = 200;
         expect(() => {createLocation(location)}).toThrow();
     });
-    it('Location created successfully', () => {
+    it('Tracking ID must be a valid uuid', () => {
         const location = {
             latitude: 0, longitude: 0, time: new Date(), trackingId: ""
+        };
+        expect(() => {createLocation(location)}).toThrow();
+        location.trackingId = "0123456789";
+        expect(() => {createLocation(location)}).toThrow();
+    });
+    it('Location created successfully', () => {
+        const location = {
+            latitude: 0, longitude: 0, time: new Date(), trackingId: "012345678901234567890123456789abcdef"
         };
         const expectedLocation = Object.freeze({
             getLatitude: () => location.latitude,

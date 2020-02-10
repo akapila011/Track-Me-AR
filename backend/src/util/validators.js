@@ -13,7 +13,7 @@ export const idValidator = {
             return result;
         }
         if (id.length !== 36) {
-            result.message = "User ID can only be 36 characters";
+            result.message = "ID can only be 36 characters";
             return result;
         }
         result.valid = true;

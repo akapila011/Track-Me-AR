@@ -1,7 +1,7 @@
 Location - saved, deleted
  - lat, long, time, trackingId
 TrackingSession - saved, can be deleted if no userId
- - id, userId*, time, duration (10/20/30 min), [end time?]
+ - id, userId*, startTime, duration (10/20/30 min), [end time?], updateInterval(s)?? - so that client knows after how many seconds to update any allows for a safety at end i.e. don't reject an update if before end time + timeInterval
 User - saved, updated
  - id, email, fname, lname
 Credential
