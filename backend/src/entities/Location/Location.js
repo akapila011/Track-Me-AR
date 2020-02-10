@@ -1,7 +1,7 @@
 import {isNumber, isValidDate} from "../../util/util";
 
 export function buildCreateLocation({trackingIdValidator}) {
-    return function createCredential({latitude, longitude, time = new Date(), trackingId}) {
+    return function createLocation({latitude, longitude, time = new Date(), trackingId}) {
 
         if (!isNumber(latitude) || !isNumber(longitude)) {
             throw new Error("Latitude and Longitude must be numbers");

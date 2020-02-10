@@ -34,7 +34,7 @@ ENDPOINTS
 /updateProfile
 
 /startTracking
-/updateLocation?id=
+/trackLocation?id=
 /stopTracking?id=
 
 /listTrackings?userId=_&from=_&end=_

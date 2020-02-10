@@ -1,4 +1,4 @@
-export function makeUsersTempDb ({ dbClient, TempUserModel }) {
+export function makeUsersTempDb ({TempUserModel}) {
 
     async function findById (id) {
         return TempUserModel.findById(id);

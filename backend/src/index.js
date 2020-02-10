@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import {getBaseUrl, isDev} from "./util/config";
-import {userController} from "./controllers";
+import {locationController, userController} from "./controllers";
 import makeCallback from './express-callback';
 import mongoose from "mongoose";
 
@@ -26,6 +26,7 @@ db.once('open', function() {
     app.post(`/signup`, makeCallback(userController.saveUserController));
     app.post(`/verifyUser`, makeCallback(userController.verifyUserController));
     app.post(`/signin`, makeCallback(userController.signinUserController));
+    app.post(`/trackLocation`, makeCallback(locationController.trackLocationController));
 
     if (isDev()){
         app.listen(5000, () => {

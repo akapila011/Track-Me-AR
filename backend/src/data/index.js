@@ -1,25 +1,15 @@
-import mongodb from 'mongodb'
-import mongoose from 'mongoose';
 import {makeUsersDb} from "./users-db";
 import {makeUsersTempDb} from "./users-temp-db";
-
 import {makeCredentialsDb} from './credentials-db';
 
 import {CredentialModel} from '../models/CredentialModel';
 import {UserModel} from '../models/UserModel';
 import {TempUserModel} from '../models/TempUserModel';
+import {LocationModel} from "../models/LocationModel";
+import {makeLocationDb} from "./location-db";
 
-// const MongoClient = mongodb.MongoClient;
-// const url = process.env.DB_URL;
-// const dbName = process.env.DB_NAME;
-// const client = new MongoClient(url, { useNewUrlParser: true });
-
-
-export function makeDb () {
-    return null;
-}
-
-export const usersDb = makeUsersDb({makeDb, UserModel});
-export const usersTempDb = makeUsersTempDb({makeDb, TempUserModel});
-export const credentialsDb = makeCredentialsDb({makeDb, CredentialModel});
+export const usersDb = makeUsersDb({UserModel});
+export const usersTempDb = makeUsersTempDb({TempUserModel});
+export const credentialsDb = makeCredentialsDb({CredentialModel});
+export const locationsDb = makeLocationDb({LocationModel});
 

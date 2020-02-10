@@ -16,7 +16,7 @@ LocationSchema.virtual('loc').get(function () {
 // Queries
 LocationSchema.statics = {
     async findById(_id) {
-        return await this.find({_id: _id}).exec();
+        return await this.find({_id: _id}).limit(1).exec();
     },
 
     async findByTrackingId(trackingId) {

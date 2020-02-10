@@ -1,4 +1,4 @@
-export function makeUsersDb ({ dbClient, UserModel }) {
+export function makeUsersDb ({UserModel}) {
     
     async function findById(id) {
         return await UserModel.findById(id);

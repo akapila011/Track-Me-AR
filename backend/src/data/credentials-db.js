@@ -1,4 +1,4 @@
-export function makeCredentialsDb ({ dbClient, CredentialModel }) {
+export function makeCredentialsDb ({CredentialModel}) {
     const collectionName = "credentials";
 
     async function findByUserId (userId) {
