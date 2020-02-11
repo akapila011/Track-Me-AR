@@ -1,5 +1,5 @@
 // import {makeSaveUser} from "./save-user";
-import {usersDb, usersTempDb, credentialsDb, locationsDb} from "../data";
+import {usersDb, usersTempDb, credentialsDb, locationsDb, trackingSessionsDb} from "../data";
 import {makeVerifyUser} from "./verify-user";
 import {makeSaveTempUser} from "./save-temp-user";
 import {codeGenerator, hashing} from "../util/util";
@@ -11,6 +11,9 @@ const jwt = require('jsonwebtoken');
 import {getJwtSecretKey} from "../util/config";
 import {makeTrackLocationUsecase} from "./track-location";
 import createLocation from "../entities/Location";
+import {makeStartTrackingUsecase} from "./start-tracking";
+import createTrackingSession from "../entities/TrackingSession";
+import {durationValidation} from "../util/validators";
 
 
 // const saveUser = makeSaveUser({usersTempDb});
@@ -20,6 +23,7 @@ const verifyUser = makeVerifyUser({usersTempDb, usersDb, createTempUser, createC
 const signinUser = makeSignInUserUsecase({usersDb, credentialsDb, hashing, jwtSign: jwt, jwtSecretKey: getJwtSecretKey()});
 
 const trackLocation = makeTrackLocationUsecase({locationsDb, createLocation});
+const startTracking = makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation, trackLocationUsecase: trackLocation, durationValidation});
 
 
 export const userService = Object.freeze({
@@ -29,5 +33,6 @@ export const userService = Object.freeze({
 });
 
 export const locationService = Object.freeze({
-    trackLocationUsecase: trackLocation
+    trackLocationUsecase: trackLocation,
+    startTrackingUsecase: startTracking
 });

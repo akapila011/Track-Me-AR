@@ -1,4 +1,4 @@
-import {isNullUndefined, isString, isValidDate, stringHasNumber} from "./util";
+import {isNullUndefined, isNumber, isString, isValidDate, stringHasNumber} from "./util";
 
 
 export const idValidator = {
@@ -100,6 +100,23 @@ export const passwordValidator = {
         }
         if (!stringHasNumber(password)) {
             result.message = "Password should contain at least 1 digit (number)";
+            return result;
+        }
+        result.valid = true;
+        return result;
+    }
+};
+
+export const durationValidation = {
+    isValidTrackingDuration: (duration) => {
+        const result = {valid: false, message: ""};
+        if (!isNumber(duration)) {
+            result.message = "Duration must be a valid number";
+            return result;
+        }
+        const validDurations = new Set([600, 1200, 1800, 2400]);  // 10/20/30/40 minutes in seconds
+        if (!validDurations.has(duration)) {
+            result.message = "Duration can only be 10/20/30/40 minutes";
             return result;
         }
         result.valid = true;

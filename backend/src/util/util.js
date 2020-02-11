@@ -75,3 +75,7 @@ export function statusCodeToType(httpCode) {
     }
     return "error";
 }
+
+export function addSecondsToDate(date, seconds) {
+    return new Date(date.setSeconds(seconds));
+}
