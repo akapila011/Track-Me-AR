@@ -1,11 +1,15 @@
-import {isNumber, isValidDate} from "../../util/util";
+import {isNumber, isString, isValidDate} from "../../util/util";
 
 export function buildCreateTrackingSession({uuidValidator}) {
-    return function createTrackingSession({id, userId, startTime, endTime, updateInterval, forceStoppedAt}) {
+    return function createTrackingSession({id, trackingCode, userId, startTime, endTime, updateInterval, forceStoppedAt}) {
 
         const validIdResult = uuidValidator.isValidUUID(id);
         if (!validIdResult.valid) {
             throw new Error(validIdResult.message);
+        }
+
+        if (!isString(trackingCode) && trackingCode.length < 10) {
+            throw new Error("Tracking code must be a valid 10 character string");
         }
 
         if (userId) { // only if given
@@ -41,6 +45,7 @@ export function buildCreateTrackingSession({uuidValidator}) {
 
         return Object.freeze({
             getId: () => id,
+            getTrackingCode: () => trackingCode,
             getUserId: () => userId,
             getStartTime: () => startTime,
             getEndTime: () => endTime,

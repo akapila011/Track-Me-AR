@@ -13,7 +13,11 @@ export function makeStartTracking ({ startTrackingUsecase }) {
                 },
                 statusCode: response.statusCode,
 
-                body: { type: statusCodeToType(response.statusCode), message: response.message }
+                body: { type: statusCodeToType(response.statusCode),
+                    message: response.message,
+                    trackingCode: response.trackingCode,
+                    trackingUrl: response.trackingUrl
+                }
             }
         } catch (e) {
             // TODO: Error logging

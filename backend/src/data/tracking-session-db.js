@@ -5,6 +5,10 @@ export function makeTrackingSessionsDb ({ TrackingSessionModel }) {
         return await TrackingSessionModel.findById(id);
     }
 
+    async function findByTrackingCode(trackingCode) {
+        return await TrackingSessionModel.findByTrackingCode(trackingCode);
+    }
+
     async function insert (trackingSession) {
         try {
             let saveRes = await TrackingSessionModel.create(trackingSession);
@@ -33,6 +37,7 @@ export function makeTrackingSessionsDb ({ TrackingSessionModel }) {
 
     return Object.freeze({
         findById,
+        findByTrackingCode,
         insert,
         update,
         remove

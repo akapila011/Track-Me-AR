@@ -23,7 +23,8 @@ const verifyUser = makeVerifyUser({usersTempDb, usersDb, createTempUser, createC
 const signinUser = makeSignInUserUsecase({usersDb, credentialsDb, hashing, jwtSign: jwt, jwtSecretKey: getJwtSecretKey()});
 
 const trackLocation = makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb});
-const startTracking = makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation, trackLocationUsecase: trackLocation, durationValidation});
+const startTracking = makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation,
+    trackLocationUsecase: trackLocation, durationValidation, codeGenerator});
 
 
 export const userService = Object.freeze({

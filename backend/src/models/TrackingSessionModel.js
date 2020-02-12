@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const TrackingSessionSchema = new Schema({
     id:  {type: String, required: true, unique: true, index: true},
+    trackingCode:  {type: String, required: true, unique: true, index: true},
     userId: {type: String},
     startTime:   {type: Date, required: true},
     endTime:   {type: Date, required: true},
@@ -19,6 +20,9 @@ const TrackingSessionSchema = new Schema({
 TrackingSessionSchema.statics = {
     async findById(id) {
         return await this.find({id: id}).limit(1).exec();
+    },
+    async findByTrackingCode(trackingCode) {
+        return await this.find({trackingCode: trackingCode}).limit(1).exec();
     }
 };
 

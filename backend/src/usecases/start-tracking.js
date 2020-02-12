@@ -1,6 +1,6 @@
 import {addSecondsToDate, generateUUID} from "../util/util";
 
-export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation, trackLocationUsecase, durationValidation}) {
+export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation, trackLocationUsecase, durationValidation, codeGenerator}) {
     return async function startTracking({userId, latitude, longitude, duration}) {
         const response = {
             statusCode: 500,
@@ -9,6 +9,12 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
 
         const trackingSessionData = {};
         trackingSessionData.id = generateUUID(32);
+        trackingSessionData.trackingCode = codeGenerator.alphaNumeric(10);
+        const duplicateTrackingCodes = await trackingSessionsDb.findByTrackingCode(trackingSessionData.trackingCode);
+        if (duplicateTrackingCodes && duplicateTrackingCodes.length > 1) {
+            trackingSessionData.trackingCode = codeGenerator.alphaNumeric(10); // TODO: do x retries
+        }
+
         trackingSessionData.userId = userId;
         trackingSessionData.startTime = new Date();
 
@@ -22,7 +28,7 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
         trackingSessionData.updateInterval = 30; // TODO: see how to vary this later
         trackingSessionData.forceStoppedAt = null;
 
-        const trackingsSession = createTrackingSession(trackingSessionData);
+        const trackingSession = createTrackingSession(trackingSessionData);
 
         const locationData = {
             latitude: latitude,
@@ -35,7 +41,7 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
 
         let saveResult = await trackingSessionsDb.insert(trackingSessionData);
         response.statusCode = saveResult.httpStatus;
-        response.message = saveResult.message;
+        response.message = response.statusCode === 200 ? "Tracking session started" : response.statusCode;
         if (response.statusCode === 200) {
             const locationResponse = await trackLocationUsecase(locationData);
             if (locationResponse.statusCode !== 200) {
@@ -46,6 +52,9 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
                 }
                 response.statusCode = 500;
                 response.message = "Tracking session valid but could not set initial location. Try again later."
+            } else { // all went well
+                response.trackingCode = trackingSession.getTrackingCode();
+                response.trackingUrl = ``;  // TODO: figure this from configs once it is working on front-end
             }
         }
         return response;
