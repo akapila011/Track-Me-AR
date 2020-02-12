@@ -1,11 +1,12 @@
-import {statusCodeToType} from "../util/util";
+import {getJwtObjectFromHttpRequest, statusCodeToType} from "../util/util";
 
 export function makeStartTracking ({ startTrackingUsecase }) {
     return async function startTracking (httpRequest) {
         try {
             const userBody = httpRequest.body;
 
-            const response = await startTrackingUsecase({getUserId: null, latitude: userBody.latitude, longitude: userBody.longitude});  // TODO: get userId from jwt
+            const loggedInData = getJwtObjectFromHttpRequest(httpRequest); // optional data
+            const response = await startTrackingUsecase({userId: loggedInData.userId, latitude: userBody.latitude, longitude: userBody.longitude, duration: 600});  // TODO: make duration flexible for logged in users
             return {
                 headers: {
                     'Content-Type': 'application/json',

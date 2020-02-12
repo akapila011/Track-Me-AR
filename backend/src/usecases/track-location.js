@@ -1,5 +1,5 @@
 
-export function makeTrackLocationUsecase({locationsDb, createLocation}) {
+export function makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb}) {
     return async function trackLocation(locationData) {
         const response = {
             statusCode: 500,
@@ -8,13 +8,13 @@ export function makeTrackLocationUsecase({locationsDb, createLocation}) {
 
         const location = createLocation(locationData);
 
-        const trackingSessions = null;
+        const trackingSessions = await trackingSessionsDb.findById(location.getTrackingId());
         if (trackingSessions && trackingSessions.length < 1) {
             response.statusCode = 404;
             response.message = "Could not determine the tracking session while posting latest location";
             return response;
         }
-        const trackingSession = null;
+        const trackingSession = trackingSessions[0];
 
         if (location.time > (trackingSession.endTime + trackingSession.updateInterval)) {
             response.statusCode = 304;

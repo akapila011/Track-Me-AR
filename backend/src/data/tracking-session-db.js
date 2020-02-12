@@ -2,7 +2,7 @@ export function makeTrackingSessionsDb ({ TrackingSessionModel }) {
     const collectionName = "trackingsessions";
 
     async function findById(id) {
-        return await TrackingSessionModel.findById(id).exec();
+        return await TrackingSessionModel.findById(id);
     }
 
     async function insert (trackingSession) {

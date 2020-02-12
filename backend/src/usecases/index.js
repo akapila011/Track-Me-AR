@@ -22,7 +22,7 @@ const saveCredential = makeCreateCredential({credentialsDb, createCredential, us
 const verifyUser = makeVerifyUser({usersTempDb, usersDb, createTempUser, createCredential, saveCredential});
 const signinUser = makeSignInUserUsecase({usersDb, credentialsDb, hashing, jwtSign: jwt, jwtSecretKey: getJwtSecretKey()});
 
-const trackLocation = makeTrackLocationUsecase({locationsDb, createLocation});
+const trackLocation = makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb});
 const startTracking = makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation, trackLocationUsecase: trackLocation, durationValidation});
 
 

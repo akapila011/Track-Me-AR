@@ -8,6 +8,7 @@ module.exports = function makeExpressCallabck (controller) {
       method: req.method,
       path: req.path,
       headers: {
+          'Authorization': req.get('Authorization'),
         'Content-Type': req.get('Content-Type'),
         Referer: req.get('referer'),
         'User-Agent': req.get('User-Agent')

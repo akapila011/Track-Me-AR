@@ -26,6 +26,8 @@ db.once('open', function() {
     app.post(`/signup`, makeCallback(userController.saveUserController));
     app.post(`/verifyUser`, makeCallback(userController.verifyUserController));
     app.post(`/signin`, makeCallback(userController.signinUserController));
+
+    app.post(`/startTracking`, makeCallback(locationController.startTrackingController));
     app.post(`/trackLocation`, makeCallback(locationController.trackLocationController));
 
     if (isDev()){

@@ -1,7 +1,7 @@
 import {addSecondsToDate, generateUUID} from "../util/util";
 
 export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation, trackLocationUsecase, durationValidation}) {
-    return async function startTracking(userId, latitude, longitude) {
+    return async function startTracking({userId, latitude, longitude, duration}) {
         const response = {
             statusCode: 500,
             message: "Unknown Error: Check Logs"
@@ -12,13 +12,13 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
         trackingSessionData.userId = userId;
         trackingSessionData.startTime = new Date();
 
-        const durationValidationResult = durationValidation.isValidTrackingDuration(trackingSessionData.duration);
+        const durationValidationResult = durationValidation.isValidTrackingDuration(duration);
         if (!durationValidationResult.valid) {
             response.statusCode = 400;
             response.message = durationValidationResult.message;
             return response;
         }
-        trackingSessionData.endDate = addSecondsToDate(trackingSessionData.startTime, trackingSessionData.duration);
+        trackingSessionData.endTime = addSecondsToDate(trackingSessionData.startTime, duration);
         trackingSessionData.updateInterval = 30; // TODO: see how to vary this later
         trackingSessionData.forceStoppedAt = null;
 
@@ -33,7 +33,7 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
 
         const location = createLocation(locationData);  // To detect errors
 
-        let saveResult = await trackingSessionsDb.insert(trackingsSession);
+        let saveResult = await trackingSessionsDb.insert(trackingSessionData);
         response.statusCode = saveResult.httpStatus;
         response.message = saveResult.message;
         if (response.statusCode === 200) {

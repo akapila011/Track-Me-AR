@@ -1,5 +1,8 @@
+import {getJwtSecretKey} from "./config";
+
 const bcrypt = require('bcryptjs');
 const uuidv4 = require('uuid/v4');
+const jwt = require('jsonwebtoken');
 
 export function isNullUndefined(variable) {
     return variable == null;
@@ -77,5 +80,21 @@ export function statusCodeToType(httpCode) {
 }
 
 export function addSecondsToDate(date, seconds) {
-    return new Date(date.setSeconds(seconds));
+    return new Date(date.setSeconds(date.getSeconds() + seconds));
+}
+
+export function getJwtObjectFromHttpRequest(httpRequest) {  // returns {} or object with user data
+    let token = {};
+    const authHeader = httpRequest.headers["Authorization"];
+    if (authHeader) {
+        const splitStr = authHeader.split(" ");
+        if (splitStr.length === 2 && splitStr[0] === "Bearer") {
+            try {
+                token = jwt.verify(splitStr[1], getJwtSecretKey());
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }
+    return token;
 }

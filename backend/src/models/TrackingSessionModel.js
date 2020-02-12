@@ -17,8 +17,8 @@ const TrackingSessionSchema = new Schema({
 
 // Queries
 TrackingSessionSchema.statics = {
-    async findById(_id) {
-        return await this.find({_id: _id}).limit(1).exec();
+    async findById(id) {
+        return await this.find({id: id}).limit(1).exec();
     }
 };
 

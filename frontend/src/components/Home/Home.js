@@ -4,17 +4,74 @@ import {ViewTracking} from "../ViewTracking/ViewTracking";
 import {TextField, Button} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
+import axios from "axios/index";
+import {getJwt, isGeolocationAvailable, setCoords, showMessage, startLoader, stopLoader} from "../../util/util";
+import {SIGN_IN_URL, START_TRACKING_URL} from "../../util/urls";
+import Snackbar from '@material-ui/core/Snackbar';
 
 export default class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: false,
+            message: "",
+            messageType: "",
+
+            tracking: false,
             trackingCode: {
                 value: "",
                 error: false,
                 helperText: ""
             }
         };
+    }
+
+    startTrackingClicked() {
+        if (!isGeolocationAvailable) {
+            showMessage(this, "warn", "Please allow Geo-Location access in order to track your location");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const sendData = {
+                latitude: latitude,
+                longitude: longitude,
+            };
+            this.startTracking(sendData);
+        }, (error) => {
+            console.log("geo err ", error);
+            showMessage(this, "warn", "Could not get your location at this time. Try again later.");
+            return;
+        });
+    }
+
+    startTracking(sendData) {
+        startLoader(this);
+        axios({
+            method: "POST",
+            url: START_TRACKING_URL,
+            timeout: 15000,
+            data: sendData,
+            headers: {"Authorization": `Bearer ${getJwt()}`}, // optional
+        }).then((response) => {
+            console.log("startTracking response ", response);
+            let data = response.data;
+            if (data.type === "success") { // TODO: should get the tracking code, and event stream url
+                showMessage(this, data.type, data.message);
+            }
+        }).catch((error) => {
+            console.error(error.message);
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.error(error.response.data.statusCode, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
+                return;
+            }
+            showMessage(this, "error", error.message);
+        }).finally(() => {
+            stopLoader(this);
+        });  // end axios
     }
   
   render () {
@@ -27,6 +84,11 @@ export default class Home extends Component {
           >
               <Grid item xs={5}>
                   <h2 style={{marginBottom: "30%"}}>Track Me AR</h2>
+                  <Snackbar
+                      open={this.state.message}
+                      onClose={() => {this.setState({message: "", messageType: ""});}}
+                      message={this.state.message}
+                  />
                   <form autoComplete="off">
                       <TextField id="trackingCode" label="Enter Tracking Code"
                                  required
@@ -68,6 +130,7 @@ export default class Home extends Component {
                           variant="contained"
                           color="secondary"
                           size="large"
+                          onClick={this.startTrackingClicked.bind(this)}
                           startIcon={<LocationSearchingIcon />}
                       >
                           Start Tracking Me
