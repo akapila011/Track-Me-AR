@@ -6,7 +6,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
 import axios from "axios/index";
 import {getJwt, isGeolocationAvailable, setCoords, showMessage, startLoader, stopLoader} from "../../util/util";
-import {SIGN_IN_URL, START_TRACKING_URL} from "../../util/urls";
+import {SIGN_IN_URL, START_TRACKING_URL, TRACK_LOCATION_URL} from "../../util/urls";
 import Snackbar from '@material-ui/core/Snackbar';
 
 export default class Home extends Component {
@@ -69,9 +69,10 @@ export default class Home extends Component {
                 trackingCode.value = data.trackingCode;
                 trackingCode.error = false;
                 trackingCode.helperText = "";
-                this.setState({trackingCode: trackingCode, tracking: data.trackingCode, trackingEndTime: data.trackingEndTime}, () => {
+                this.setState({trackingCode: trackingCode, tracking: data.trackingCode,
+                    trackingEndTime: data.trackingEndTime, trackingUpdateInterval: data.trackingUpdateInterval}, () => {
                     this.trackingIntervalId = setInterval(this.updateTracking.bind(this), (data.trackingUpdateInterval * 1000));
-                });  // TODO: need to reset this after some time
+                });
             }
         }).catch((error) => {
             console.error(error.message);
@@ -88,6 +89,11 @@ export default class Home extends Component {
 
     updateTracking() {
         console.log("UPDATE LOCATION ");
+        const now = new Date();
+        if (now > this.state.trackingEndTime) {
+            this.stopTracking();
+            return;
+        }
         navigator.geolocation.getCurrentPosition((position) => {
             const trackingCode = this.state.tracking;
             const latitude = position.coords.latitude;
@@ -107,7 +113,40 @@ export default class Home extends Component {
     }
     
     postUpdatedTracking(sendData) {
-        
+        axios({
+            method: "POST",
+            url: TRACK_LOCATION_URL,
+            timeout: 10000,
+            data: sendData,
+            headers: {"Authorization": `Bearer ${getJwt()}`}, // optional
+        }).then((response) => {
+            console.log("postUpdatedTracking response ", response);
+            let data = response.data;
+            if (data.type === "success" && data.finished) {
+                showMessage(this, data.type, data.message);
+                this.stopTracking();
+            }
+        }).catch((error) => {
+            console.error(error.message);
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.error(error.response.data.statusCode, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
+                return;
+            }
+            showMessage(this, "error", error.message);
+        }).finally(() => {
+            stopLoader(this);
+        });  // end axios
+    }
+
+    stopTracking() {
+        const trackingCode = this.state.trackingCode;
+        trackingCode.value = "";
+        trackingCode.error = false;
+        trackingCode.helperText = "";
+        this.setState({trackingCode: trackingCode, tracking: "", trackingEndTime: null}, () => {
+            clearInterval(this.trackingIntervalId);
+        });
     }
 
     componentWillUnmount() {
@@ -115,6 +154,9 @@ export default class Home extends Component {
     }
     
     isTrackingMe() {
+        console.log(" this.state.tracking", this.state.tracking );
+        console.log(" this.state.trackingEndTime", this.state.trackingEndTime );
+        console.log(" this.state.trackingUpdateInterval", this.state.trackingUpdateInterval );
         return this.state.tracking && this.state.trackingEndTime && this.state.trackingUpdateInterval;
     }
 
@@ -200,7 +242,7 @@ export default class Home extends Component {
                   }
                   {
                       isTrackingMe &&
-                      <h3>Currently Tracking you. Tracking Code is <strong>{this.state.tracking}</strong></h3>
+                      <span>Currently Tracking you. Tracking Code is <strong style={{color: "orange"}}>{this.state.tracking}</strong></span>
                   }
                   
               </Grid>

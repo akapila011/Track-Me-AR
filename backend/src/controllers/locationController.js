@@ -43,14 +43,17 @@ export function makeTrackLocation ({ trackLocationUsecase }) {
         try {
             const userBody = httpRequest.body;
 
-            const response = await trackLocationUsecase({latitude: userBody.latitude, longitude: userBody.longitude, trackingId: userBody.trackingId});
+            const response = await trackLocationUsecase({latitude: userBody.latitude, longitude: userBody.longitude, trackingCode: userBody.trackingCode});
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 statusCode: response.statusCode,
 
-                body: { type: statusCodeToType(response.statusCode), message: response.message }
+                body: { type: statusCodeToType(response.statusCode),
+                    message: response.message,
+                    finished: response.finished
+                }
             }
         } catch (e) {
             // TODO: Error logging
