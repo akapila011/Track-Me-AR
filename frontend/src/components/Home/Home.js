@@ -17,7 +17,10 @@ export default class Home extends Component {
             message: "",
             messageType: "",
 
-            tracking: false,
+            tracking: "",
+            trackingEndTime: null,
+            trackingUpdateInterval: null,
+
             trackingCode: {
                 value: "",
                 error: false,
@@ -25,6 +28,8 @@ export default class Home extends Component {
             }
         };
     }
+
+    trackingIntervalId = null;
 
     startTrackingClicked() {
         if (!isGeolocationAvailable) {
@@ -58,8 +63,15 @@ export default class Home extends Component {
         }).then((response) => {
             console.log("startTracking response ", response);
             let data = response.data;
-            if (data.type === "success") { // TODO: should get the tracking code, and event stream url
+            if (data.type === "success" && data.trackingCode && data.trackingUpdateInterval) { // TODO: should get event stream url
                 showMessage(this, data.type, data.message);
+                const trackingCode = this.state.trackingCode;
+                trackingCode.value = data.trackingCode;
+                trackingCode.error = false;
+                trackingCode.helperText = "";
+                this.setState({trackingCode: trackingCode, tracking: data.trackingCode, trackingEndTime: data.trackingEndTime}, () => {
+                    this.trackingIntervalId = setInterval(this.updateTracking.bind(this), (data.trackingUpdateInterval * 1000));
+                });  // TODO: need to reset this after some time
             }
         }).catch((error) => {
             console.error(error.message);
@@ -73,8 +85,41 @@ export default class Home extends Component {
             stopLoader(this);
         });  // end axios
     }
-  
-  render () {
+
+    updateTracking() {
+        console.log("UPDATE LOCATION ");
+        navigator.geolocation.getCurrentPosition((position) => {
+            const trackingCode = this.state.tracking;
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const sendData = {
+                trackingCode: trackingCode,
+                latitude: latitude,
+                longitude: longitude,
+            };
+            console.log("UPDATE LOCATION ", sendData);
+            this.postUpdatedTracking(sendData);
+        }, (error) => {
+            console.log("geo err ", error);
+            showMessage(this, "warn", "Unable to get location for update at this time.");
+            return;
+        });
+    }
+    
+    postUpdatedTracking(sendData) {
+        
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.trackingIntervalId);
+    }
+    
+    isTrackingMe() {
+        return this.state.tracking && this.state.trackingEndTime && this.state.trackingUpdateInterval;
+    }
+
+    render () {
+        const isTrackingMe = this.isTrackingMe();
       return (
           <Grid id="home"
                 container
@@ -89,61 +134,75 @@ export default class Home extends Component {
                       onClose={() => {this.setState({message: "", messageType: ""});}}
                       message={this.state.message}
                   />
-                  <form autoComplete="off">
-                      <TextField id="trackingCode" label="Enter Tracking Code"
-                                 required
-                                 error={this.state.trackingCode.error}
-                                 helperText={this.state.trackingCode.helperText}
-                                 placeholder={"e.g. A123B456"}
-                                 value={this.state.trackingCode.value}
-                                 onChange={(event) => {
-                                     const text = event.target.value;
-                                     const trackingCode = this.state.trackingCode;
-                                     trackingCode.value = text;
-                                     trackingCode.error = false;
-                                     trackingCode.helperText = "";
-                                     if (text.length > 14) {
-                                         trackingCode.error = true;
-                                         trackingCode.helperText = "Tracking Code cannot be more than 14 characters";
-                                     }
-                                     this.setState({trackingCode: trackingCode});
-                                 }}
-                      />
-                      <Button
-                          variant="contained"
-                          color="primary"
-                          size="large"
-                          startIcon={<SearchIcon />}
-                      >
-                          Find
-                      </Button>
-                  </form>
-                  <br/>
-                  <br/>
-                  <div>
-                      <br/>
-                      OR
-                      <br/>
-                      <br/>
+                  {
+                      !isTrackingMe &&
+                      <div>
+                          <form autoComplete="off">
+                              <TextField id="trackingCode" label="Enter Tracking Code"
+                                         required
+                                         error={this.state.trackingCode.error}
+                                         helperText={this.state.trackingCode.helperText}
+                                         placeholder={"e.g. A123B456"}
+                                         value={this.state.trackingCode.value}
+                                         onChange={(event) => {
+                                             const text = event.target.value;
+                                             const trackingCode = this.state.trackingCode;
+                                             trackingCode.value = text;
+                                             trackingCode.error = false;
+                                             trackingCode.helperText = "";
+                                             if (text.length > 14) {
+                                                 trackingCode.error = true;
+                                                 trackingCode.helperText = "Tracking Code cannot be more than 14 characters";
+                                             }
+                                             this.setState({trackingCode: trackingCode});
+                                         }}
+                              />
+                              <Button
+                                  variant="contained"
+                                  color="primary"
+                                  size="large"
+                                  startIcon={<SearchIcon/>}
+                              >
+                                  Find
+                              </Button>
+                          </form>
+                          <br/>
+                          <br/>
+                          <div>
 
-                      <Button
-                          variant="contained"
-                          color="secondary"
-                          size="large"
-                          onClick={this.startTrackingClicked.bind(this)}
-                          startIcon={<LocationSearchingIcon />}
-                      >
-                          Start Tracking Me
-                      </Button>
-                      <br/>
-                      <br/>
+                              <br/>
+                              OR
+                              <br/>
 
-                      <span style={{fontSize: "12px"}}>
+                              <br/>
+
+                              <Button
+                                  variant="contained"
+                                  color="secondary"
+                                  size="large"
+                                  onClick={this.startTrackingClicked.bind(this)}
+                                  startIcon={<LocationSearchingIcon/>}
+                              >
+                                  Start Tracking Me
+                              </Button>
+
+                              <br/>
+                              <br/>
+
+                              <span style={{fontSize: "12px"}}>
                           Allow Access to Location Services.
                           <br/>
                           Once you've started tracking you will get a tracking code to share with others or you can send a link for them to quickly view your location.
                       </span>
-                  </div>
+
+                          </div>
+                      </div>
+                  }
+                  {
+                      isTrackingMe &&
+                      <h3>Currently Tracking you. Tracking Code is <strong>{this.state.tracking}</strong></h3>
+                  }
+                  
               </Grid>
               <Grid item xs={7}>
                   <ViewTracking/>

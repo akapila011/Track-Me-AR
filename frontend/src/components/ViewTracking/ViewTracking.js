@@ -36,8 +36,6 @@ export class ViewTracking extends Component {
         }
     }
 
-
-
     render() {
         const isGeolocationAvailable = this.state.isGeolocationAvailable;
         const coords = this.state.coords;

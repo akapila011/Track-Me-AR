@@ -16,7 +16,9 @@ export function makeStartTracking ({ startTrackingUsecase }) {
                 body: { type: statusCodeToType(response.statusCode),
                     message: response.message,
                     trackingCode: response.trackingCode,
-                    trackingUrl: response.trackingUrl
+                    trackingEndTime: response.trackingEndTime,
+                    trackingUrl: response.trackingUrl,
+                    trackingUpdateInterval: response.trackingUpdateInterval
                 }
             }
         } catch (e) {

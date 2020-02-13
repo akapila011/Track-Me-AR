@@ -54,6 +54,8 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
                 response.message = "Tracking session valid but could not set initial location. Try again later."
             } else { // all went well
                 response.trackingCode = trackingSession.getTrackingCode();
+                response.trackingEndTime = trackingSession.getEndTime();
+                response.trackingUpdateInterval = trackingSession.getUpdateInterval();
                 response.trackingUrl = ``;  // TODO: figure this from configs once it is working on front-end
             }
         }
