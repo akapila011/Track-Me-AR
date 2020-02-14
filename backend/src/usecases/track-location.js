@@ -8,8 +8,9 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
             finished: false
         };
 
-
-        const trackingSessions = locationData.trackingId ? await trackingSessionsDb.findById(locationData.trackingId) : await trackingSessionsDb.findByTrackingCode(locationData.trackingCode);
+        const trackingSessions = locationData.trackingId ?
+            await trackingSessionsDb.findById(locationData.trackingId) :
+            await trackingSessionsDb.findByTrackingCode(locationData.trackingCode);
         if (trackingSessions && trackingSessions.length < 1) {
             response.statusCode = 404;
             response.message = "Could not determine the tracking session while posting latest location";
@@ -20,7 +21,8 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
 
         const location = createLocation(locationData);
 
-        if (location.getTime() > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
+        if (trackingSession.forceStoppedAt != null ||
+            location.getTime() > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
             response.statusCode = 304;
             response.message = "Tracking session has ended";
             response.finished = true;

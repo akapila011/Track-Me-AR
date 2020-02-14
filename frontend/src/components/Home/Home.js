@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
-import {Grid} from "@material-ui/core";
+import {Button, Grid, TextField} from "@material-ui/core";
 import {ViewTracking} from "../ViewTracking/ViewTracking";
-import {TextField, Button} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
+import BlockIcon from '@material-ui/icons/Block';
 import axios from "axios/index";
-import {getJwt, isGeolocationAvailable, setCoords, showMessage, startLoader, stopLoader} from "../../util/util";
-import {SIGN_IN_URL, START_TRACKING_URL, TRACK_LOCATION_URL} from "../../util/urls";
+import {getJwt, isValidDate, showMessage, startLoader, stopLoader} from "../../util/util";
+import {START_TRACKING_URL, STOP_TRACKING_URL, TRACK_LOCATION_URL} from "../../util/urls";
 import Snackbar from '@material-ui/core/Snackbar';
+import Countdown from 'react-countdown';
+import {ConfirmDialog} from "../SharedComponents/ConfirmationDialog";
 
 export default class Home extends Component {
     constructor(props) {
@@ -20,6 +22,7 @@ export default class Home extends Component {
             tracking: "",
             trackingEndTime: null,
             trackingUpdateInterval: null,
+            showConfirmStopTracking: false,
 
             trackingCode: {
                 value: "",
@@ -29,14 +32,9 @@ export default class Home extends Component {
         };
     }
 
-    trackingIntervalId = null;
+    trackingIntervalId = null; // js time interval function id to cancel on end and when unmounting
 
     startTrackingClicked() {
-        if (!isGeolocationAvailable) {
-            showMessage(this, "warn", "Please allow Geo-Location access in order to track your location");
-            return;
-        }
-
         navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -46,8 +44,7 @@ export default class Home extends Component {
             };
             this.startTracking(sendData);
         }, (error) => {
-            console.log("geo err ", error);
-            showMessage(this, "warn", "Could not get your location at this time. Try again later.");
+            showMessage(this, "warn", "Please allow Geo-Location access in order to track your location");
             return;
         });
     }
@@ -61,7 +58,7 @@ export default class Home extends Component {
             data: sendData,
             headers: {"Authorization": `Bearer ${getJwt()}`}, // optional
         }).then((response) => {
-            console.log("startTracking response ", response);
+            // console.log("startTracking response ", response);
             let data = response.data;
             if (data.type === "success" && data.trackingCode && data.trackingUpdateInterval) { // TODO: should get event stream url
                 showMessage(this, data.type, data.message);
@@ -88,7 +85,7 @@ export default class Home extends Component {
     }
 
     updateTracking() {
-        console.log("UPDATE LOCATION ");
+        // console.log("UPDATE LOCATION ");
         const now = new Date();
         if (now > this.state.trackingEndTime) {
             this.stopTracking();
@@ -121,7 +118,7 @@ export default class Home extends Component {
             data: sendData,
             headers: {"Authorization": `Bearer ${getJwt()}`}, // optional
         }).then((response) => {
-            console.log("postUpdatedTracking response ", response);
+            // console.log("postUpdatedTracking response ", response);
             let data = response.data;
             if (data.type === "success" && data.finished) {
                 showMessage(this, data.type, data.message);
@@ -158,7 +155,42 @@ export default class Home extends Component {
     }
     
     isTrackingMe() {
-        return this.state.tracking && this.state.trackingEndTime && this.state.trackingUpdateInterval;
+        return this.state.tracking && isValidDate(this.state.trackingEndTime) && this.state.trackingUpdateInterval;
+    }
+
+    closeShowConfirmStopTracking() {
+        this.setState({showConfirmStopTracking: false});
+    }
+
+    confirmStopTracking() {
+        startLoader(this);
+        const sendData={trackingCode: this.state.tracking};
+        axios({
+            method: "POST",
+            url: STOP_TRACKING_URL,
+            timeout: 15000,
+            data: sendData,
+            headers: {"Authorization": `Bearer ${getJwt()}`}, // optional
+        }).then((response) => {
+            // console.log("stopTracking response ", response);
+            let data = response.data;
+            if (data.type === "success") {
+                this.stopTracking();
+                this.closeShowConfirmStopTracking();
+                showMessage(this, data.type, data.message);
+            }
+        }).catch((error) => {
+            console.error(error.message);
+            this.closeShowConfirmStopTracking();
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.error(error.response.data.statusCode, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
+                return;
+            }
+            showMessage(this, "error", error.message);
+        }).finally(() => {
+            stopLoader(this);
+        });  // end axios
     }
 
     render () {
@@ -244,9 +276,37 @@ export default class Home extends Component {
                   {
                       isTrackingMe &&
                           <div>
-                              <span style={{fontSize: "14px"}}>Currently Tracking you. Tracking Code is <strong style={{color: "orange", fontSize: "16px"}}>{this.state.tracking}</strong></span>
+                              <span style={{fontSize: "18x"}}>Currently Tracking you. Tracking Code is <strong style={{color: "orange", fontSize: "22px"}}>{this.state.tracking}</strong></span>
                               <br/>
-                              <span style={{fontSize: "11px"}}>Your session will end at {this.state.trackingEndTime}</span>
+                              <span style={{fontSize: "12px"}}>You can share this code with others to track your movement in real-time.</span>
+                              <br/>
+                              <br/>
+                              <span style={{fontSize: "16px"}}>Tracking ends in <span style={{color: "orange", fontSize: "20px"}}><Countdown date={this.state.trackingEndTime} onComplete={this.stopTracking.bind(this)}/></span></span>
+                              <br/>
+                              <br/>
+                              <span style={{fontSize: "12px"}}>Your session will end at {this.state.trackingEndTime.toString()}</span>
+                              <br/>
+                              <br/>
+                              <Button
+                                  variant="contained"
+                                  color="secondary"
+                                  size="large"
+                                  onClick={() => {this.setState({showConfirmStopTracking: true});}}
+                                  startIcon={<BlockIcon/>}
+                              >
+                                  Stop Tracking
+                              </Button>
+                              <ConfirmDialog
+                                  open={this.state.showConfirmStopTracking}
+                                  close={this.closeShowConfirmStopTracking.bind(this)}
+                                  isLoading={this.state.isLoading}
+                                  title={"Confirm Stop Tracking"}
+                                  contentText={"Are you sure you want to stop tracking your location? Your location will no longer be broadcast to people you may have shared the code with."}
+                                  negativeText={"No"}
+                                  negativeAction={this.closeShowConfirmStopTracking.bind(this)}
+                                  positiveText={"Stop Tracking"}
+                                  positiveAction={this.confirmStopTracking.bind(this)}
+                              />
                           </div>
                   }
                   

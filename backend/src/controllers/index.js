@@ -1,9 +1,9 @@
 import {makeSaveTempUser, makeSigninUser, makeVerifyUser} from "./userController";
 import {locationService, userService} from "../usecases"
-import {makeStartTracking, makeTrackLocation} from "./locationController";
+import {makeStartTracking, makeStopTracking, makeTrackLocation} from "./locationController";
 
 const {saveTempUser, verifyUser, signinUser} = userService;
-const {startTrackingUsecase, trackLocationUsecase} = locationService;
+const {startTrackingUsecase, trackLocationUsecase, stopTrackingUsecase} = locationService;
 
 const saveUserController = makeSaveTempUser({ saveTempUserUsecase: saveTempUser });
 const verifyUserController = makeVerifyUser({ verifyUserUsecase: verifyUser });
@@ -11,6 +11,7 @@ const signinUserController = makeSigninUser({ signinUserUsecase: signinUser });
 
 const trackLocationController = makeTrackLocation({trackLocationUsecase});
 const startTrackingController = makeStartTracking({startTrackingUsecase});
+const stopTrackingController = makeStopTracking({stopTrackingUsecase});
 
 export const userController = Object.freeze({
     saveUserController,
@@ -20,5 +21,6 @@ export const userController = Object.freeze({
 
 export const locationController = Object.freeze({
     trackLocationController,
-    startTrackingController
+    startTrackingController,
+    stopTrackingController
 });

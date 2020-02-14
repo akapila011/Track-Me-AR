@@ -71,3 +71,35 @@ export function makeTrackLocation ({ trackLocationUsecase }) {
         }
     }
 }
+
+export function makeStopTracking ({ stopTrackingUsecase }) {
+    return async function stopTracking (httpRequest) {
+        try {
+            const userBody = httpRequest.body;
+
+            const loggedInData = getJwtObjectFromHttpRequest(httpRequest); // optional data
+            const response = await stopTrackingUsecase({trackingCode: userBody.trackingCode, userId: loggedInData.userId});
+            return {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                statusCode: response.statusCode,
+
+                body: { type: statusCodeToType(response.statusCode), message: response.message}
+            }
+        } catch (e) {
+            // TODO: Error logging
+            console.error(e);
+            return {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                statusCode: 400,
+                body: {
+                    type: "error",
+                    message: e.message
+                }
+            }
+        }
+    }
+}

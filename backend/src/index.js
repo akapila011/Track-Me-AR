@@ -29,6 +29,7 @@ db.once('open', function() {
 
     app.post(`/startTracking`, makeCallback(locationController.startTrackingController));
     app.post(`/trackLocation`, makeCallback(locationController.trackLocationController));
+    app.post(`/stopTracking`, makeCallback(locationController.stopTrackingController)); // TODO: need secret key to avoid letting others end it
 
     if (isDev()){
         app.listen(5000, () => {

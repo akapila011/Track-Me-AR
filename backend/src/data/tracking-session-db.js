@@ -21,9 +21,9 @@ export function makeTrackingSessionsDb ({ TrackingSessionModel }) {
 
     async function update (trackingSession) {
         try {
-            let updateRes = await TrackingSessionModel.updateOne(trackingSession);
+            let updateRes = await TrackingSessionModel.updateOne({_id: trackingSession._id}, {forceStoppedAt: trackingSession.forceStoppedAt});
             // console.log("After update ", updateRes);
-            return {httpStatus: 200, message: "Tracking session updated"}
+            return {httpStatus: 201, message: "Tracking session updated"}
         } catch (err) {
             // console.error("in my werr", err);
             return {httpStatus: 500, message: "Could not update the tracking session"}
