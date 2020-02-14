@@ -1,3 +1,4 @@
+import {addSecondsToDate} from "../util/util";
 
 export function makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb}) {
     return async function trackLocation(locationData) {
@@ -19,13 +20,12 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
 
         const location = createLocation(locationData);
 
-        if (location.time > (trackingSession.endTime + trackingSession.updateInterval)) {
+        if (location.getTime() > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
             response.statusCode = 304;
             response.message = "Tracking session has ended";
             response.finished = true;
             return response;
         }
-
 
         const locationToSave = {
             latitude: location.getLatitude(),

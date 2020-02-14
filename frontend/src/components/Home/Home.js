@@ -70,7 +70,7 @@ export default class Home extends Component {
                 trackingCode.error = false;
                 trackingCode.helperText = "";
                 this.setState({trackingCode: trackingCode, tracking: data.trackingCode,
-                    trackingEndTime: data.trackingEndTime, trackingUpdateInterval: data.trackingUpdateInterval}, () => {
+                    trackingEndTime: new Date(data.trackingEndTime), trackingUpdateInterval: data.trackingUpdateInterval}, () => {
                     this.trackingIntervalId = setInterval(this.updateTracking.bind(this), (data.trackingUpdateInterval * 1000));
                 });
             }
@@ -92,6 +92,7 @@ export default class Home extends Component {
         const now = new Date();
         if (now > this.state.trackingEndTime) {
             this.stopTracking();
+            showMessage(this, "warn", "Tracking has ended.");
             return;
         }
         navigator.geolocation.getCurrentPosition((position) => {
@@ -103,7 +104,7 @@ export default class Home extends Component {
                 latitude: latitude,
                 longitude: longitude,
             };
-            console.log("UPDATE LOCATION ", sendData);
+            // console.log("UPDATE LOCATION ", sendData);
             this.postUpdatedTracking(sendData);
         }, (error) => {
             console.log("geo err ", error);
@@ -130,6 +131,9 @@ export default class Home extends Component {
             console.error(error.message);
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
                 console.error(error.response.data.statusCode, error.response.data.message);
+                if (error.response.data.statusCode === 304) {
+                    this.stopTracking();
+                }
                 showMessage(this, error.response.data.type, error.response.data.message);
                 return;
             }
@@ -154,9 +158,6 @@ export default class Home extends Component {
     }
     
     isTrackingMe() {
-        console.log(" this.state.tracking", this.state.tracking );
-        console.log(" this.state.trackingEndTime", this.state.trackingEndTime );
-        console.log(" this.state.trackingUpdateInterval", this.state.trackingUpdateInterval );
         return this.state.tracking && this.state.trackingEndTime && this.state.trackingUpdateInterval;
     }
 
@@ -242,7 +243,11 @@ export default class Home extends Component {
                   }
                   {
                       isTrackingMe &&
-                      <span>Currently Tracking you. Tracking Code is <strong style={{color: "orange"}}>{this.state.tracking}</strong></span>
+                          <div>
+                              <span style={{fontSize: "14px"}}>Currently Tracking you. Tracking Code is <strong style={{color: "orange", fontSize: "16px"}}>{this.state.tracking}</strong></span>
+                              <br/>
+                              <span style={{fontSize: "11px"}}>Your session will end at {this.state.trackingEndTime}</span>
+                          </div>
                   }
                   
               </Grid>
