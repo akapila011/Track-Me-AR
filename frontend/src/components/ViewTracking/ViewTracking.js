@@ -63,7 +63,7 @@ export class ViewTracking extends Component {
                     viewMap &&
                     <Container id="map">
                         <Map center={center} zoom={zoom} width={700} height={450} attribution={false}>
-                            <Marker anchor={center} payload={1} onClick={({ event, anchor, payload }) => {
+                            <Marker anchor={center} payload={1} style={{color: "red"}} onClick={({ event, anchor, payload }) => {
                                 console.log("Marker Click ", event)
                                 console.log("Marker Click ", anchor)
                                 console.log("Marker Click ", payload)
