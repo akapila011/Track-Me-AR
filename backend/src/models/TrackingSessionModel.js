@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const TrackingSessionSchema = new Schema({
-    // TODO: need id? - only main use is as foreign key to location
     id:  {type: String, required: true, unique: true, index: true},
     trackingCode:  {type: String, required: true, unique: true, index: true},
+    trackingSecret:  {type: String, required: false,},
     userId: {type: String},
     startTime:   {type: Date, required: true},
     endTime:   {type: Date, required: true},

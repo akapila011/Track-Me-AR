@@ -20,6 +20,7 @@ export default class Home extends Component {
             messageType: "",
 
             tracking: "",
+            trackingSecret: null,
             trackingEndTime: null,
             trackingUpdateInterval: null,
             showConfirmStopTracking: false,
@@ -67,7 +68,9 @@ export default class Home extends Component {
                 trackingCode.error = false;
                 trackingCode.helperText = "";
                 this.setState({trackingCode: trackingCode, tracking: data.trackingCode,
-                    trackingEndTime: new Date(data.trackingEndTime), trackingUpdateInterval: data.trackingUpdateInterval}, () => {
+                    trackingEndTime: new Date(data.trackingEndTime), trackingUpdateInterval: data.trackingUpdateInterval,
+                    trackingSecret: data.trackingSecret
+                }, () => {
                     this.trackingIntervalId = setInterval(this.updateTracking.bind(this), (data.trackingUpdateInterval * 1000));
                 });
             }
@@ -145,7 +148,7 @@ export default class Home extends Component {
         trackingCode.value = "";
         trackingCode.error = false;
         trackingCode.helperText = "";
-        this.setState({trackingCode: trackingCode, tracking: "", trackingEndTime: null}, () => {
+        this.setState({trackingCode: trackingCode, tracking: "", trackingSecret: null, trackingEndTime: null}, () => {
             clearInterval(this.trackingIntervalId);
         });
     }

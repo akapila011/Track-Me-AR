@@ -8,14 +8,15 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
         };
 
         const trackingSessionData = {};
-        trackingSessionData.id = generateUUID(32);
+        trackingSessionData.id = generateUUID();
         trackingSessionData.trackingCode = codeGenerator.alphaNumeric(10);
         const duplicateTrackingCodes = await trackingSessionsDb.findByTrackingCode(trackingSessionData.trackingCode);
         if (duplicateTrackingCodes && duplicateTrackingCodes.length > 1) {
-            trackingSessionData.trackingCode = codeGenerator.alphaNumeric(10); // TODO: do x retries
+            trackingSessionData.trackingCode = codeGenerator.alphaNumeric(10); // TODO: do x retries or move this check to exception catch
         }
 
-        trackingSessionData.userId = userId;
+        trackingSessionData.userId = userId ? userId : null;
+        trackingSessionData.trackingSecret = trackingSessionData.userId ? null : generateUUID();
         trackingSessionData.startTime = new Date();
 
         const durationValidationResult = durationValidation.isValidTrackingDuration(duration);
@@ -57,6 +58,7 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
                 response.trackingEndTime = trackingSession.getEndTime();
                 response.trackingUpdateInterval = trackingSession.getUpdateInterval();
                 response.trackingUrl = ``;  // TODO: figure this from configs once it is working on front-end
+                response.trackingSecret = trackingSession.getTrackingSecret();
             }
         }
         return response;

@@ -18,7 +18,8 @@ export function makeStartTracking ({ startTrackingUsecase }) {
                     trackingCode: response.trackingCode,
                     trackingEndTime: response.trackingEndTime,
                     trackingUrl: response.trackingUrl,
-                    trackingUpdateInterval: response.trackingUpdateInterval
+                    trackingUpdateInterval: response.trackingUpdateInterval,
+                    trackingSecret: response.trackingSecret,
                 }
             }
         } catch (e) {
