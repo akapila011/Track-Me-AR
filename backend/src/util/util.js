@@ -73,7 +73,7 @@ export const hashing = {
 };
 
 export function statusCodeToType(httpCode) {
-    if (httpCode >= 200 || httpCode <= 299) {
+    if (httpCode >= 200 && httpCode <= 299) {
         return "success";
     }
     return "error";

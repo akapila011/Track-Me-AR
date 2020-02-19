@@ -44,7 +44,8 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
         response.statusCode = saveResult.httpStatus;
         response.message = response.statusCode === 200 ? "Tracking session started" : response.statusCode;
         if (response.statusCode === 200) {
-            const locationResponse = await trackLocationUsecase(locationData);
+            const locationResponse = await trackLocationUsecase({locationData: locationData,
+                userId: trackingSession.getUserId(), trackingSecret: trackingSession.getTrackingSecret()});
             if (locationResponse.statusCode !== 200) {
                 try {
                     trackingSessionsDb.remove(saveResult.trackingSession);

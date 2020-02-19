@@ -1,7 +1,7 @@
 import {addSecondsToDate} from "../util/util";
 
 export function makeStopTrackingUsecase({trackingSessionsDb}) {
-    return async function stopTracking({trackingCode, userId}) {
+    return async function stopTracking({trackingCode, userId, trackingSecret}) {
         const response = {
             statusCode: 500,
             message: "Unknown Error: Check Logs"
@@ -15,25 +15,61 @@ export function makeStopTrackingUsecase({trackingSessionsDb}) {
         }
         const trackingSession = trackingSessions[0];
 
-        if (trackingSession.endTime > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
-            response.statusCode = 200;
+        if (trackingSession.forceStoppedAt != null ||
+            trackingSession.endTime > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
+            response.statusCode = 310;
             response.message = "Tracking session has already ended";
             return response;
         }
 
-        if (trackingSession.userId && trackingSession.userId !== userId) {
-            response.statusCode = 403;
-            response.message = "Login to ensure you can stop the session started by the user.";
+        const authorizedToModify = isAuthorizedToModifyTrackingSession(trackingSession, userId, trackingSecret);
+        console.log("STOP ", authorizedToModify);
+        if (authorizedToModify.statusCode !== 200) {
+            response.statusCode = authorizedToModify.statusCode || 401;
+            response.message = authorizedToModify.message || "Not authorized to stop this tracking session";
             return response;
-        } else {  // TODO: need secret key to avoid letting others end it
-
         }
 
         trackingSession.forceStoppedAt = new Date();
 
         let updateResult = await trackingSessionsDb.update(trackingSession);
         response.statusCode = updateResult.httpStatus;
-        response.message = updateResult.httpStatus === 201 ? "Tracking session has been stopped" : updateResult.message;
+        response.message = updateResult.httpStatus === 200 ? "Tracking session has been stopped" : updateResult.message;
         return response;
     }
+}
+
+export function isAuthorizedToModifyTrackingSession(trackingSession, userId, trackingSecret) {
+    const response = {
+        statusCode: 405,
+        message: "Tracking session is malformed. Cannot be modified."
+    };
+    if (trackingSession.userId != null) {
+        console.log("USER ID ", userId, trackingSession.userId);
+        if (trackingSession.userId === userId) {
+            console.log("GOT HERE TO 200")
+            response.statusCode = 200;
+            response.message = "Authorized to modify tracking session";
+            return response;
+        } else {
+            response.statusCode = 401;
+            response.message = `The tracking session (${trackingSession.trackingCode}) was created by a logged in user and can only be modified by that user.`;
+            return response;
+        }
+    }
+    else if (trackingSession.trackingSecret != null) {
+        console.log("trackingSecret ", trackingSecret, trackingSession.trackingSecret);
+
+        if (trackingSession.trackingSecret === trackingSecret) {
+            response.statusCode = 200;
+            response.message = "Authorized to modify tracking session";
+            return response;
+        } else {
+            response.statusCode = 401;
+            response.message = `The tracking session (${trackingSession.trackingCode}) was created by an anonymous user and cannot be modified with authorization`;
+            return response;
+        }
+    }
+    return response
+
 }

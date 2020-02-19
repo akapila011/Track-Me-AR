@@ -83,7 +83,7 @@ class NavBar extends Component {
 
     handleClose() {
         this.setState({menuAnchor: null}, () => {
-            this.props.clearGlobalLoggedInDetails();
+            this.props.clearGlobalLoggedInDetails(); // TODO: move logout functionality
         });
     }
 
@@ -204,7 +204,7 @@ class SignInDialog extends Component {
         }).catch((error) => {
             console.error(error.message);
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
-                console.error(error.response.data.statusCode, error.response.data.message);
+                console.error(error.response.data.type, error.response.data.message);
                 showMessage(this, error.response.data.type, error.response.data.message);
                 return;
             }
@@ -297,7 +297,7 @@ class SignUpDialog extends Component {
         }).catch((error) => {
             console.error(error.message);
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
-                console.error(error.response.data.statusCode, error.response.data.message);
+                console.error(error.response.data.type, error.response.data.message);
                 showMessage(this, error.response.data.type, error.response.data.message);
                 return;
             }
@@ -330,7 +330,7 @@ class SignUpDialog extends Component {
         }).catch((error) => {
             console.error(error.message);
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
-                console.error(error.response.data.statusCode, error.response.data.message);
+                console.error(error.response.data.type, error.response.data.message);
                 showMessage(this, error.response.data.type, error.response.data.message);
                 return;
             }

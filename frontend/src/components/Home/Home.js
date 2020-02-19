@@ -77,7 +77,7 @@ export default class Home extends Component {
         }).catch((error) => {
             console.error(error.message);
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
-                console.error(error.response.data.statusCode, error.response.data.message);
+                console.error(error.response.data.type, error.response.data.message);
                 showMessage(this, error.response.data.type, error.response.data.message);
                 return;
             }
@@ -130,8 +130,8 @@ export default class Home extends Component {
         }).catch((error) => {
             console.error(error.message);
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
-                console.error(error.response.data.statusCode, error.response.data.message);
-                if (error.response.data.statusCode === 304) {
+                console.error(error.response.data.type, error.response.data.message);
+                if (error.response.status === 310) {
                     this.stopTracking();
                 }
                 showMessage(this, error.response.data.type, error.response.data.message);
@@ -186,7 +186,7 @@ export default class Home extends Component {
             console.error(error.message);
             this.closeShowConfirmStopTracking();
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
-                console.error(error.response.data.statusCode, error.response.data.message);
+                console.error(error.response.data.type, error.response.data.message);
                 showMessage(this, error.response.data.type, error.response.data.message);
                 return;
             }

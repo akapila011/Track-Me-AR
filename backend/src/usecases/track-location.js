@@ -1,7 +1,8 @@
 import {addSecondsToDate} from "../util/util";
+import {isAuthorizedToModifyTrackingSession} from "./stop-tracking";
 
 export function makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb}) {
-    return async function trackLocation(locationData) {
+    return async function trackLocation({locationData, userId, trackingSecret}) {
         const response = {
             statusCode: 500,
             message: "Unknown Error: Check Logs",
@@ -17,13 +18,22 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
             return response;
         }
         const trackingSession = trackingSessions[0];
+
+        const authorizedToModify = isAuthorizedToModifyTrackingSession(trackingSession, userId, trackingSecret);
+        if (authorizedToModify.statusCode !== 200) {
+            response.statusCode = authorizedToModify.statusCode || 401;
+            response.message = authorizedToModify.message || "Not authorized to stop this tracking session";
+        }
+
+
         locationData.trackingId = trackingSession.id;
 
         const location = createLocation(locationData);
 
+        console.log("UPDATE TRACKING SESSION ", trackingSession);
         if (trackingSession.forceStoppedAt != null ||
             location.getTime() > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
-            response.statusCode = 304;
+            response.statusCode = 310;
             response.message = "Tracking session has ended";
             response.finished = true;
             return response;

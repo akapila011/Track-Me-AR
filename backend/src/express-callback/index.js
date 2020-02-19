@@ -20,12 +20,12 @@ module.exports = function makeExpressCallabck (controller) {
         if (httpResponse.headers) {
           res.set(httpResponse.headers)
         }
-        if (httpResponse.cookies) {
-            Object.keys(httpResponse.cookies).forEach(key => {
-                const value = httpResponse.cookies[key];
-                res.cookie(key,new String(value), { maxAge: 900000, httpOnly: true });
-            });
-        }
+        // if (httpResponse.cookies) {
+        //     Object.keys(httpResponse.cookies).forEach(key => {
+        //         const value = httpResponse.cookies[key];
+        //         res.cookie(key,new String(value), { maxAge: 900000, httpOnly: true });
+        //     });
+        // }
         res.type('json');
         res.status(httpResponse.statusCode).send(httpResponse.body);
       })

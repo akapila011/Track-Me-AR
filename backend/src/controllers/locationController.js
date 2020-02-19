@@ -44,7 +44,9 @@ export function makeTrackLocation ({ trackLocationUsecase }) {
         try {
             const userBody = httpRequest.body;
 
-            const response = await trackLocationUsecase({latitude: userBody.latitude, longitude: userBody.longitude, trackingCode: userBody.trackingCode});
+            const loggedInData = getJwtObjectFromHttpRequest(httpRequest); // optional data
+            const locationData = {latitude: userBody.latitude, longitude: userBody.longitude, trackingCode: userBody.trackingCode};
+            const response = await trackLocationUsecase({locationData: locationData, userId: loggedInData.userId, trackingSecret: userBody.trackingSecret});
             return {
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,13 +81,12 @@ export function makeStopTracking ({ stopTrackingUsecase }) {
             const userBody = httpRequest.body;
 
             const loggedInData = getJwtObjectFromHttpRequest(httpRequest); // optional data
-            const response = await stopTrackingUsecase({trackingCode: userBody.trackingCode, userId: loggedInData.userId});
+            const response = await stopTrackingUsecase({trackingCode: userBody.trackingCode, userId: loggedInData.userId, trackingSecret: userBody.trackingSecret});
             return {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 statusCode: response.statusCode,
-
                 body: { type: statusCodeToType(response.statusCode), message: response.message}
             }
         } catch (e) {
