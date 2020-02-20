@@ -82,9 +82,7 @@ class NavBar extends Component {
     }
 
     handleClose() {
-        this.setState({menuAnchor: null}, () => {
-            this.props.clearGlobalLoggedInDetails(); // TODO: move logout functionality
-        });
+        this.setState({menuAnchor: null});
     }
 
     closeSignInForm() {
@@ -93,6 +91,11 @@ class NavBar extends Component {
 
     closeRegisterForm() {
         this.setState({showRegisterForm: false});
+    }
+
+    handleLogout() {
+        this.props.clearGlobalLoggedInDetails();
+        this.handleClose();
     }
 
     render() {
@@ -159,7 +162,7 @@ class NavBar extends Component {
                                     onClose={this.handleClose.bind(this)}
                                 >
                                     <MenuItem onClick={this.handleClose.bind(this)}>{this.props.email}</MenuItem>
-                                    <MenuItem onClick={this.handleClose.bind(this)}>Logout</MenuItem>
+                                    <MenuItem onClick={this.handleLogout.bind(this)}>Logout</MenuItem>
                                 </Menu>
                             </div>
                         </Grid>

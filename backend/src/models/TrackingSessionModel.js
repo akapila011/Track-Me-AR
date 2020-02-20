@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import {addSecondsToDate} from "../util/util";
 const Schema = mongoose.Schema;
 
 const TrackingSessionSchema = new Schema({
@@ -13,9 +14,11 @@ const TrackingSessionSchema = new Schema({
 });
 
 // Virtuals
-// TrackingSessionSchema.virtual('loc').get(function () {
-//     return this.latitude + ', ' + this.longitude;
-// });
+TrackingSessionSchema.virtual('isFinished').get(function (date) {
+    return this.forceStoppedAt != null ||
+        date > addSecondsToDate(this.endTime, this.updateInterval)
+
+});
 
 // Queries
 TrackingSessionSchema.statics = {

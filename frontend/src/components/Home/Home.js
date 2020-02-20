@@ -6,7 +6,7 @@ import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
 import BlockIcon from '@material-ui/icons/Block';
 import axios from "axios/index";
 import {getJwt, isValidDate, showMessage, startLoader, stopLoader} from "../../util/util";
-import {START_TRACKING_URL, STOP_TRACKING_URL, TRACK_LOCATION_URL} from "../../util/urls";
+import {FIND_TRACKING_SESSION_URL, START_TRACKING_URL, STOP_TRACKING_URL, TRACK_LOCATION_URL} from "../../util/urls";
 import Snackbar from '@material-ui/core/Snackbar';
 import Countdown from 'react-countdown';
 import {ConfirmDialog} from "../SharedComponents/ConfirmationDialog";
@@ -18,6 +18,8 @@ export default class Home extends Component {
             isLoading: false,
             message: "",
             messageType: "",
+
+            foundSession: null,  // or {} with fields
 
             tracking: "",
             trackingSecret: null,
@@ -165,9 +167,8 @@ export default class Home extends Component {
         this.setState({showConfirmStopTracking: false});
     }
 
-    confirmStopTracking() {
+    confirmStopTracking(sendData) {
         startLoader(this);
-        const sendData={trackingCode: this.state.tracking};
         axios({
             method: "POST",
             url: STOP_TRACKING_URL,
@@ -196,8 +197,54 @@ export default class Home extends Component {
         });  // end axios
     }
 
+    findTrackingSession() {
+        if (!this.state.trackingCode || !this.state.trackingCode.value) {
+            return showMessage(this, "warn", "Please enter a Tracking code to find");
+        }
+        startLoader(this);
+        const sendData={trackingCode: this.state.trackingCode.value};
+        axios({
+            method: "POST",
+            url: FIND_TRACKING_SESSION_URL,
+            timeout: 12000,
+            data: sendData,
+            headers: {"Authorization": `Bearer ${getJwt()}`}, // optional
+        }).then((response) => {
+            console.log("findTrackingSession response ", response);
+            let data = response.data;
+            const x = data.type === "success" && data.startTime && data.endTime;
+            console.log("data.type === \"success\" && data.startTime && data.endTime ", x);
+            if (data.type === "success" && data.startTime && data.endTime) { // TODO: should get event stream url
+                showMessage(this, data.type, data.message);
+                const foundSession = {
+                    trackingCode: data.trackingCode,
+                    startTime: new Date(data.startTime),
+                    endTime: new Date(data.endTime),
+                    url: data.url,
+                    finished: data.finished,
+                };
+                this.setState({foundSession: foundSession}, () => {console.log("this.state ", this.state);});
+            }
+        }).catch((error) => {
+            console.error(error.message);
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.error(error.response.data.type, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
+                return;
+            }
+            showMessage(this, "error", error.message);
+        }).finally(() => {
+            stopLoader(this);
+        });  // end axios
+    }
+
+    isSessionFound() {
+        return this.state.foundSession && isValidDate(this.state.foundSession.startTime) && isValidDate(this.state.foundSession.endTime);
+    }
+
     render () {
         const isTrackingMe = this.isTrackingMe();
+        const isSessionFound = this.isSessionFound();
       return (
           <Grid id="home"
                 container
@@ -239,6 +286,7 @@ export default class Home extends Component {
                                   variant="contained"
                                   color="primary"
                                   size="large"
+                                  onClick={this.findTrackingSession.bind(this)}
                                   startIcon={<SearchIcon/>}
                               >
                                   Find
@@ -246,6 +294,31 @@ export default class Home extends Component {
                           </form>
                           <br/>
                           <br/>
+                          {
+                              isSessionFound &&
+                                  <div>
+                                      <span>Currently Tracking Session <strong style={{color: "orange", fontSize: "22px"}}>{this.state.foundSession.trackingCode}</strong></span>
+                                      <span style={{fontSize: "12px"}}>Started At: {this.state.foundSession.startTime.toString()}</span>
+                                      <span style={{fontSize: "12px"}}>Finishes At: {this.state.foundSession.endTime.toString()}</span>
+                                      {
+                                          !this.state.foundSession.finished &&
+                                              <div>
+                                                  <br/>
+                                                  <span style={{fontSize: "16px"}}>Session ends in
+                                                      <span style={{color: "orange", fontSize: "20px"}}>
+                                                          <Countdown date={this.state.foundSession.endTime}
+                                                                     onComplete={() => {
+                                                                         const foundSession = this.state.foundSession;
+                                                                         if (foundSession) {foundSession.finished = true;}
+                                                                         this.setState({foundSession: foundSession});
+                                                                     }}/>
+                                                      </span>
+                                                  </span>
+                                                  <br/>
+                                              </div>
+                                      }
+                                  </div>
+                          }
                           <div>
 
                               <br/>

@@ -105,3 +105,35 @@ export function makeStopTracking ({ stopTrackingUsecase }) {
         }
     }
 }
+
+export function makeFindTrackingSession ({ findTrackingSessionUsecase }) {
+    return async function findTrackingSession (httpRequest) {
+        try {
+            const userBody = httpRequest.body;
+
+            // const loggedInData = getJwtObjectFromHttpRequest(httpRequest); // optional data
+            const response = await findTrackingSessionUsecase({trackingCode: userBody.trackingCode});
+            response.type = statusCodeToType(response.statusCode);
+            return {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                statusCode: response.statusCode,
+                body: response
+            }
+        } catch (e) {
+            // TODO: Error logging
+            console.error(e);
+            return {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                statusCode: 400,
+                body: {
+                    type: "error",
+                    message: e.message
+                }
+            }
+        }
+    }
+}

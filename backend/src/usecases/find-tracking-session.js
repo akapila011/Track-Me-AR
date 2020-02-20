@@ -1,11 +1,15 @@
 import {addSecondsToDate} from "../util/util";
 
-export function makeFindTrackingSession({trackingSessionsDb}) {
+export function makeFindTrackingSessionUsecase({trackingSessionsDb}) {
     return async function findTrackingSession({trackingCode, onlyActive = true}) {
-        const response = {  // TODO: determine payload to send back - event stream url, endTime, startTime
+        const response = {
             statusCode: 500,
             message: "Unknown Error: Check Logs",
-            finished: false
+            trackingCode: trackingCode,
+            finished: false,
+            startTime: null,
+            endTime: null,
+            url: null // TODO: once it is working on the frontend
         };
 
         const trackingSessions = await trackingSessionsDb.findByTrackingCode(trackingCode);
@@ -15,6 +19,7 @@ export function makeFindTrackingSession({trackingSessionsDb}) {
             return response;
         }
         const trackingSession = trackingSessions[0];
+        const now = new Date();
 
         if (!onlyActive) {  // return even inactive/force stopped ones
             if (trackingSession.forceStoppedAt != null) {
@@ -23,7 +28,7 @@ export function makeFindTrackingSession({trackingSessionsDb}) {
                 response.finished = true;
                 return response;
             }
-            if (new Date() > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
+            if (now > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
                 response.statusCode = 200;
                 response.message = "Tracking session found but is almost about to finish";
                 response.finished = true;
@@ -32,9 +37,11 @@ export function makeFindTrackingSession({trackingSessionsDb}) {
         }
 
         // return only if still on going - active
-
         response.statusCode = 200;
         response.message = `Tracking session found for ${trackingCode}`;
+        response.finished = trackingSession.forceStoppedAt != null || now > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)
+        response.startTime = trackingSession.startTime;
+        response.endTime = trackingSession.endTime;
         return response;
     }
 }
