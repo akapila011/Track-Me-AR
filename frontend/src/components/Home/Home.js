@@ -167,8 +167,9 @@ export default class Home extends Component {
         this.setState({showConfirmStopTracking: false});
     }
 
-    confirmStopTracking(sendData) {
+    confirmStopTracking() {
         startLoader(this);
+        const sendData = {trackingCode: this.state.tracking};
         axios({
             method: "POST",
             url: STOP_TRACKING_URL,

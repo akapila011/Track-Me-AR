@@ -41,7 +41,7 @@ export function makeFindTrackingSessionUsecase({trackingSessionsDb}) {
         response.message = `Tracking session found for ${trackingCode}`;
         response.finished = trackingSession.forceStoppedAt != null || now > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)
         response.startTime = trackingSession.startTime;
-        response.endTime = trackingSession.endTime;
+        response.endTime = trackingSession.endTime;  // TODO: fix this - is 30seocnds more
         return response;
     }
 }
