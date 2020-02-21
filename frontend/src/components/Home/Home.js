@@ -71,7 +71,7 @@ export default class Home extends Component {
                 trackingCode.helperText = "";
                 this.setState({trackingCode: trackingCode, tracking: data.trackingCode,
                     trackingEndTime: new Date(data.trackingEndTime), trackingUpdateInterval: data.trackingUpdateInterval,
-                    trackingSecret: data.trackingSecret
+                    trackingSecret: data.trackingSecret, foundSession: null
                 }, () => {
                     this.trackingIntervalId = setInterval(this.updateTracking.bind(this), (data.trackingUpdateInterval * 1000));
                 });
@@ -189,6 +189,9 @@ export default class Home extends Component {
             this.closeShowConfirmStopTracking();
             if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
                 console.error(error.response.data.type, error.response.data.message);
+                if (error.response.status === 310) {
+                    this.stopTracking();
+                }
                 showMessage(this, error.response.data.type, error.response.data.message);
                 return;
             }
@@ -211,10 +214,8 @@ export default class Home extends Component {
             data: sendData,
             headers: {"Authorization": `Bearer ${getJwt()}`}, // optional
         }).then((response) => {
-            console.log("findTrackingSession response ", response);
+            // console.log("findTrackingSession response ", response);
             let data = response.data;
-            const x = data.type === "success" && data.startTime && data.endTime;
-            console.log("data.type === \"success\" && data.startTime && data.endTime ", x);
             if (data.type === "success" && data.startTime && data.endTime) { // TODO: should get event stream url
                 showMessage(this, data.type, data.message);
                 const foundSession = {
@@ -224,7 +225,7 @@ export default class Home extends Component {
                     url: data.url,
                     finished: data.finished,
                 };
-                this.setState({foundSession: foundSession}, () => {console.log("this.state ", this.state);});
+                this.setState({foundSession: foundSession});
             }
         }).catch((error) => {
             console.error(error.message);

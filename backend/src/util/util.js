@@ -80,7 +80,8 @@ export function statusCodeToType(httpCode) {
 }
 
 export function addSecondsToDate(date, seconds) {
-    return new Date(date.setSeconds(date.getSeconds() + seconds));
+    const myDate = new Date(date);
+    return new Date(myDate.setSeconds(date.getSeconds() + seconds));
 }
 
 export function getJwtObjectFromHttpRequest(httpRequest) {  // returns {} or object with user data

@@ -23,7 +23,6 @@ export function makeStopTrackingUsecase({trackingSessionsDb}) {
         }
 
         const authorizedToModify = isAuthorizedToModifyTrackingSession(trackingSession, userId, trackingSecret);
-        console.log("STOP ", authorizedToModify);
         if (authorizedToModify.statusCode !== 200) {
             response.statusCode = authorizedToModify.statusCode || 401;
             response.message = authorizedToModify.message || "Not authorized to stop this tracking session";
@@ -45,9 +44,7 @@ export function isAuthorizedToModifyTrackingSession(trackingSession, userId, tra
         message: "Tracking session is malformed. Cannot be modified."
     };
     if (trackingSession.userId != null) {
-        console.log("USER ID ", userId, trackingSession.userId);
         if (trackingSession.userId === userId) {
-            console.log("GOT HERE TO 200")
             response.statusCode = 200;
             response.message = "Authorized to modify tracking session";
             return response;
@@ -58,8 +55,6 @@ export function isAuthorizedToModifyTrackingSession(trackingSession, userId, tra
         }
     }
     else if (trackingSession.trackingSecret != null) {
-        console.log("trackingSecret ", trackingSecret, trackingSession.trackingSecret);
-
         if (trackingSession.trackingSecret === trackingSecret) {
             response.statusCode = 200;
             response.message = "Authorized to modify tracking session";
