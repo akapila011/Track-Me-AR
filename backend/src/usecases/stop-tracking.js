@@ -15,8 +15,7 @@ export function makeStopTrackingUsecase({trackingSessionsDb}) {
         }
         const trackingSession = trackingSessions[0];
 
-        if (trackingSession.forceStoppedAt != null ||
-            trackingSession.endTime > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
+        if (trackingSession.isFinished(trackingSession.endTime)) {
             response.statusCode = 310;
             response.message = "Tracking session has already ended";
             return response;

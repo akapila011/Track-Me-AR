@@ -30,10 +30,7 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
 
         const location = createLocation(locationData);
 
-        console.log("location.getTime() ", location.getTime());
-        console.log("location addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval) ", addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval));
-        if (trackingSession.forceStoppedAt != null ||
-            location.getTime() > addSecondsToDate(trackingSession.endTime, trackingSession.updateInterval)) {
+        if (trackingSession.isFinished(location.getTime())) {
             response.statusCode = 310;
             response.message = "Tracking session has ended";
             response.finished = true;

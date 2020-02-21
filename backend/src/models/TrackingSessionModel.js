@@ -13,12 +13,12 @@ const TrackingSessionSchema = new Schema({
     forceStoppedAt: { type: Date, required: false }
 });
 
-// Virtuals
-TrackingSessionSchema.virtual('isFinished').get(function (date) {
+// Instance methods
+TrackingSessionSchema.methods.isFinished = function(date) {
     return this.forceStoppedAt != null ||
         date > addSecondsToDate(this.endTime, this.updateInterval)
 
-});
+};
 
 // Queries
 TrackingSessionSchema.statics = {
