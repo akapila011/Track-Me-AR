@@ -11,6 +11,7 @@ import Overlay from 'pigeon-overlay'
 import mapPlaceholder from "../../assets/images/map-placeholder.jpg";
 import arPlaceholder from "../../assets/images/ar-placeholder.png";
 import {isGeolocationAvailable, setCoords} from "../../util/util";
+import {TRACK_SESSION_URL} from "../../util/urls";
 
 export class ViewTracking extends Component {
     constructor(props) {
@@ -33,6 +34,24 @@ export class ViewTracking extends Component {
             }, (error) => {
                 console.log("geo err ", error);
             });
+        }
+
+        if (!!window.EventSource) {
+            var source = new EventSource(TRACK_SESSION_URL + "/123")
+
+            source.addEventListener('message', function(e) {
+                console.log("TRACK_SESSION_URL ", e.data);
+            }, false)
+
+            source.addEventListener('open', function(e) {
+                console.log(TRACK_SESSION_URL, "Connection was opened");
+            }, false)
+
+            source.addEventListener('error', function(e) {
+                if (e.readyState == EventSource.CLOSED) {
+                    console.log(TRACK_SESSION_URL, "Connection was closed");
+                }
+            }, false)
         }
     }
 
