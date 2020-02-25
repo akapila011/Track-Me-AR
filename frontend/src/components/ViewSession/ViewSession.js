@@ -23,7 +23,9 @@ export default class ViewSession extends Component {
                   alignItems="center"
             >
                 <Grid item xs={9}>
-                    <ViewTracking/>
+                    <ViewTracking
+                        trackingCode={this.props.trackingCode}
+                    />
                 </Grid>
                 <Grid item xs={3}>
                     <span>data</span>

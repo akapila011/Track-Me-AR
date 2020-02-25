@@ -59,7 +59,11 @@ class App extends Component {
                             <Home/>
                         </div>
                     )}/>
-                    <Route path="/view/:trackingId" component={ViewSession} />
+                    <Route path="/view/:trackingCode" render={({match}) => (
+                        <ViewSession
+                            trackingCode={match.params.trackingCode}
+                        /> )}
+                        />
                 </Grid>
             </BrowserRouter>
         );

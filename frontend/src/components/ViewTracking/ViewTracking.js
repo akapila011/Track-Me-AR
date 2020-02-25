@@ -24,7 +24,10 @@ export class ViewTracking extends Component {
         };
     }
 
+    eventSource = null;  // gets updated once tracking code found
+
     componentDidMount() {
+        const trackingCode = this.props.trackingCode;
         if (isGeolocationAvailable()) {
             this.setState({isGeolocationAvailable: true});
             navigator.geolocation.getCurrentPosition((position) => {
@@ -36,18 +39,18 @@ export class ViewTracking extends Component {
             });
         }
 
-        if (!!window.EventSource) {
-            var source = new EventSource(TRACK_SESSION_URL + "/123")
+        if (!!window.EventSource && trackingCode) {
+            this.eventSource = new EventSource(`${TRACK_SESSION_URL}/${trackingCode}`);
 
-            source.addEventListener('message', function(e) {
+            this.eventSource.addEventListener('message', function(e) {
                 console.log("TRACK_SESSION_URL ", e.data);
             }, false)
 
-            source.addEventListener('open', function(e) {
+            this.eventSource.addEventListener('open', function(e) {
                 console.log(TRACK_SESSION_URL, "Connection was opened");
             }, false)
 
-            source.addEventListener('error', function(e) {
+            this.eventSource.addEventListener('error', function(e) {
                 if (e.readyState == EventSource.CLOSED) {
                     console.log(TRACK_SESSION_URL, "Connection was closed");
                 }
