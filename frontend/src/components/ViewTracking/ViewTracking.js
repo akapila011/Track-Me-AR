@@ -51,7 +51,7 @@ export class ViewTracking extends Component {
             }, false)
 
             this.eventSource.addEventListener('error', function(e) {
-                if (e.readyState == EventSource.CLOSED) {
+                if (e.readyState === EventSource.CLOSED) {
                     console.log(TRACK_SESSION_URL, "Connection was closed");
                 }
             }, false)
