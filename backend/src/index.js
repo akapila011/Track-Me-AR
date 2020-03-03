@@ -5,34 +5,7 @@ import {locationController, userController} from "./controllers";
 import makeCallback from './middleware/expresscallback';
 import sse from './middleware/sse-middleware';
 import mongoose from "mongoose";
-import kafka from "kafka-node";
-
 const BASE_URL = getBaseUrl();
-
-const Consumer = kafka.HighLevelConsumer;
-const client = new kafka.Client("127.0.0.1:9042");
-let consumer = new Consumer(
-    client,
-    [{ topic: "trackingSessions", partition: 0 }],
-    {
-        autoCommit: false,
-        fetchMaxWaitMs: 2000,
-        fetchMaxBytes: 1024 * 1024,
-        encoding: 'utf8',
-        fromOffset: false
-    }
-);
-
-consumer.on('message', async function(message) {
-    console.log('consumer message');
-    console.log(
-        'kafka-> ',
-        message.value
-    );
-});
-consumer.on('error', function(err) {
-    console.log('error', err);
-});
 
 mongoose.connect('mongodb://127.0.0.1/trackmeardb', {useNewUrlParser: true}); // TODO: get from .env
 const db = mongoose.connection;
