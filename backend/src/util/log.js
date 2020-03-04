@@ -1,8 +1,44 @@
-import winston from 'winston';
+const { createLogger, format, transports } = require('winston');
+const DailyRotateFile = require('winston-daily-rotate-file');
+import {isDev} from "./config";
 
-const consoleTransport = new winston.transports.Console();
+const consoleTransport = new transports.Console();
+const rotateFileTransport = new (transports.DailyRotateFile)({
+    filename: 'trackmear-%DATE%.log',
+    dirName: "logs", // from config
+    datePattern: 'YYYY-MM-DD-HH-ss',
+    utc: true,
+    zippedArchive: true,
+    maxSize: '50m',
+    maxFiles: '31d'
+});
+
+rotateFileTransport.on('rotate', function(oldFilename, newFilename) {
+    const msg = `LOGGER -> rotating from ${rotateFileTransport} to ${newFilename}`;
+    console.log(msg);
+    log.info(msg);
+});
+
+
+
+const { combine, timestamp, label, printf } = format;
+const applicationLogFormat = printf(({ level, message, timestamp }) => {
+    return `${timestamp} ${level}: ${message}`;
+});
+
 const myWinstonOptions = {
-    transports: [consoleTransport]
+    level: "silly",  // from config
+    transports: [
+        rotateFileTransport
+    ],
+    format: combine(
+        timestamp(),
+        applicationLogFormat
+    ),
 };
 
-export const logger = new winston.createLogger(myWinstonOptions);
+if (isDev()) {
+    myWinstonOptions.transports.push(consoleTransport);
+}
+
+export const log = new createLogger(myWinstonOptions);
