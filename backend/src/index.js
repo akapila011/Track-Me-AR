@@ -5,6 +5,7 @@ import {locationController, userController} from "./controllers";
 import makeCallback from './middleware/expresscallback';
 import sse from './middleware/sse-middleware';
 import mongoose from "mongoose";
+import {subscribedConnections, onMessageConsumerTrackingSessions} from "./broker/LocationBroker";
 const BASE_URL = getBaseUrl();
 
 mongoose.connect('mongodb://127.0.0.1/trackmeardb', {useNewUrlParser: true}); // TODO: get from .env
@@ -31,9 +32,15 @@ db.once('open', function() {
     app.post(`/stopTracking`, makeCallback(locationController.stopTrackingController));
     app.post(`/findTrackingSession`, makeCallback(locationController.findTrackingSessionController));
     app.get(`/trackSession/:trackingCode`, [sse], (req, res) => {
+        const trackingCode = req.params.trackingCode;
+        // TODO: need to do validation - db calls, extract to a usecase, implement a way to remove a session
         res.sseSetup();
-        const data = {trackingCode: req.params.trackingCode, latitude: 1.234556, longitude: 4.56789, finished: false, endTime: new Date()};
+        const data = {trackingCode: trackingCode, latitude: 1.234556, longitude: 4.56789, finished: false, endTime: new Date()};
         res.sseSend(data);
+        if (subscribedConnections.has(trackingCode)) {  // intialize for this trackingSession
+            subscribedConnections.set(trackingCode, []);
+        }
+        subscribedConnections.set(trackingCode, subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()}));
     });
 
     if (isDev()){

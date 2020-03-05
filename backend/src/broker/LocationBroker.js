@@ -44,6 +44,12 @@ let consumer = new Consumer(
 consumer.on('message', onMessageConsumerTrackingSessions);
 consumer.on('error', onErrorConsumerTrackingSessions());
 
+// TODO: NEED to figure out how to make this stateless while avoiding duplicate sends to same client
+// could store res in MongoDb but need to consider query time and how to remove it later (scheduled task),
+// duplicate send handling might have to be done on a separate component OR extract the whole consumer
+// code to another scalable server with a load balancer server to ensure duplicate sends are managed
+export const subscribedConnections = new Map();  // trackingCode: [{res, subscribedAt: new Date()}]
+// TODO: find a way to uniquely identify a res so we don't send to same client
 
 export async function onMessageConsumerTrackingSessions(message) {
     console.log('consumer message');
@@ -51,6 +57,13 @@ export async function onMessageConsumerTrackingSessions(message) {
         'kafka-> ',
         message.value
     );
+    if (subscribedConnections.get(message.value)) {
+        const subscribers = subscribedConnections.get(message.value);
+        for(let i = 0; i < subscribers.length; i++) {
+            const {res, subscribedAt} = subscribers[i];
+            res.sseSend(message.value);
+        }
+    }
 }
 
 export async function onErrorConsumerTrackingSessions(message) {

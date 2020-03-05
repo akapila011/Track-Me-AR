@@ -21,7 +21,7 @@ rotateFileTransport.on('rotate', function(oldFilename, newFilename) {
 
 
 
-const { combine, timestamp, label, printf } = format;
+const { combine, timestamp, printf } = format;
 const applicationLogFormat = printf(({ level, message, timestamp }) => {
     return `${timestamp} ${level}: ${message}`;
 });
