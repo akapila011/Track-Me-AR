@@ -9,6 +9,10 @@ export function makeLocationDb ({ LocationModel }) {
         return await LocationModel.findByTrackingId(trackingId);
     }
 
+    async function findLatestByTrackingId(trackingId) {
+        return await LocationModel.findLatestByTrackingId(trackingId);
+    }
+
     async function insert (location) {
         try {
             let saveRes = await LocationModel.create(location);
@@ -27,6 +31,7 @@ export function makeLocationDb ({ LocationModel }) {
     return Object.freeze({
         findById,
         findByTrackingId,
+        findLatestByTrackingId,
         insert,
         remove
     });

@@ -20,7 +20,14 @@ LocationSchema.statics = {
     },
 
     async findByTrackingId(trackingId) {
-        return await this.find({getTrackingId: trackingId}).exec();
+        return await this.find({getTrackingId: trackingId}).limit(1).exec();
+    },
+
+    async findLatestByTrackingId(trackingId) {
+        return await this.find({getTrackingId: trackingId})
+            .sort('-time')
+            .limit(1)
+            .exec();
     },
 
 };

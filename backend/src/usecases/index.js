@@ -16,6 +16,7 @@ import createTrackingSession from "../entities/TrackingSession";
 import {durationValidation} from "../util/validators";
 import {makeStopTrackingUsecase} from "./stop-tracking";
 import {makeFindTrackingSessionUsecase} from "./find-tracking-session";
+import {makeValidateTrackSession} from "./validate-track-session";
 
 
 // const saveUser = makeSaveUser({usersTempDb});
@@ -29,6 +30,7 @@ const startTracking = makeStartTrackingUsecase({trackingSessionsDb, createTracki
     trackLocationUsecase: trackLocation, durationValidation, codeGenerator});
 const stopTracking = makeStopTrackingUsecase({trackingSessionsDb});
 const findTrackingSession = makeFindTrackingSessionUsecase({trackingSessionsDb});
+const validateTrackSession = makeValidateTrackSession({trackingSessionsDb, locationsDb});
 
 
 export const userService = Object.freeze({
@@ -41,5 +43,6 @@ export const locationService = Object.freeze({
     trackLocationUsecase: trackLocation,
     startTrackingUsecase: startTracking,
     stopTrackingUsecase: stopTracking,
-    findTrackingSessionUsecase: findTrackingSession
+    findTrackingSessionUsecase: findTrackingSession,
+    validateTrackSessionUsecase: validateTrackSession
 });

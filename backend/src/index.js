@@ -6,6 +6,8 @@ import makeCallback from './middleware/expresscallback';
 import sse from './middleware/sse-middleware';
 import mongoose from "mongoose";
 import {subscribedConnections, onMessageConsumerTrackingSessions} from "./broker/LocationBroker";
+import {locationService} from "./usecases";
+
 const BASE_URL = getBaseUrl();
 
 mongoose.connect('mongodb://127.0.0.1/trackmeardb', {useNewUrlParser: true}); // TODO: get from .env
@@ -33,14 +35,28 @@ db.once('open', function() {
     app.post(`/findTrackingSession`, makeCallback(locationController.findTrackingSessionController));
     app.get(`/trackSession/:trackingCode`, [sse], (req, res) => {
         const trackingCode = req.params.trackingCode;
-        // TODO: need to do validation - db calls, extract to a usecase, implement a way to remove a session
-        res.sseSetup();
-        const data = {trackingCode: trackingCode, latitude: 1.234556, longitude: 4.56789, finished: false, endTime: new Date()};
-        res.sseSend(data);
-        if (subscribedConnections.has(trackingCode)) {  // intialize for this trackingSession
-            subscribedConnections.set(trackingCode, []);
-        }
-        subscribedConnections.set(trackingCode, subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()}));
+        // TODO: implement a way to remove a session
+        locationService.validateTrackSessionUsecase({trackingCode: trackingCode, getLatestLocation: true}).then((response) => {
+            if (response.statusCode === 200 && response.latitude && response.longitude) {
+                res.sseSetup();
+                const data = {trackingCode: trackingCode, latitude: response.latitude, longitude: response.longitude,
+                    finished: response.finished, startTime: response.startTime, endTime: response.endTime,
+                    locationTime: response.locationTime};
+                res.sseSend(data);
+                if (subscribedConnections.has(trackingCode)) {  // initialize for this trackingSession
+                    subscribedConnections.set(trackingCode, []);
+                }
+                subscribedConnections.set(trackingCode, subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()}));
+            } else {
+                log.error(`Problem in trackSession/${trackingCode}, response=${response}`);
+                res.type('json');
+                res.status(404).send({type: "error", message: response.message});
+            }
+        }).catch((error) => {
+            log.error(`Error while validateTrackSessionUsecase in /trackingSession/${trackingCode}: ${error}`);
+            res.type('json');
+            res.status(404).send({type: "error", message: "Error while validating tracking session for real time tracking"});
+        })
     });
 
     if (isDev()){

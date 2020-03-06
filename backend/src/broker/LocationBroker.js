@@ -1,10 +1,10 @@
 import kafka from "kafka-node";
 
 const Producer = kafka.Producer;
-const client = new kafka.Client("127.0.0.1:9042");
+const client = new kafka.KafkaClient({kafkaHost: "127.0.0.1:9042"});
 
 const kafka_topic = "trackingSessions";
-let payloads = [
+const payloads = [
     {
         topic: "trackingSessions",
         messages: "hello world"
@@ -28,8 +28,8 @@ producer.on('error', function(err) {
     throw err;
 });
 
-const Consumer = kafka.HighLevelConsumer;
-let consumer = new Consumer(
+const Consumer = kafka.Consumer;
+const consumer = new Consumer(
     client,
     [{ topic: "trackingSessions", partition: 0 }],
     {
@@ -42,7 +42,7 @@ let consumer = new Consumer(
 );
 
 consumer.on('message', onMessageConsumerTrackingSessions);
-consumer.on('error', onErrorConsumerTrackingSessions());
+consumer.on('error', onErrorConsumerTrackingSessions);
 
 // TODO: NEED to figure out how to make this stateless while avoiding duplicate sends to same client
 // could store res in MongoDb but need to consider query time and how to remove it later (scheduled task),
