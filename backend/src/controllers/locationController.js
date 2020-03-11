@@ -23,8 +23,7 @@ export function makeStartTracking ({ startTrackingUsecase }) {
                 }
             }
         } catch (e) {
-            // TODO: Error logging
-            console.error(e);
+            log.error("makeStartTracking ", e);
             return {
                 headers: {
                     'Content-Type': 'application/json'
@@ -59,8 +58,7 @@ export function makeTrackLocation ({ trackLocationUsecase }) {
                 }
             }
         } catch (e) {
-            // TODO: Error logging
-            console.error(e);
+            log.error("makeTrackLocation ", e);
             return {
                 headers: {
                     'Content-Type': 'application/json'
@@ -90,8 +88,7 @@ export function makeStopTracking ({ stopTrackingUsecase }) {
                 body: { type: statusCodeToType(response.statusCode), message: response.message}
             }
         } catch (e) {
-            // TODO: Error logging
-            console.error(e);
+            log.error("makeStopTracking ", e);
             return {
                 headers: {
                     'Content-Type': 'application/json'
@@ -122,8 +119,7 @@ export function makeFindTrackingSession ({ findTrackingSessionUsecase }) {
                 body: response
             }
         } catch (e) {
-            // TODO: Error logging
-            console.error(e);
+            log.error("makeFindTrackingSession ", e);
             return {
                 headers: {
                     'Content-Type': 'application/json'

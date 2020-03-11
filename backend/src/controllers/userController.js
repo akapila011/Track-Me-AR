@@ -15,8 +15,7 @@ export function makeSaveTempUser ({ saveTempUserUsecase }) {
                 body: { type: statusCodeToType(response.statusCode), message: response.message }
             }
         } catch (e) {
-            // TODO: Error logging
-            console.error(e);
+            log.error("makeSaveTempUser ", e);
             return {
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,8 +43,7 @@ export function makeVerifyUser ({ verifyUserUsecase: verifyUserEmailUsecase }) {
                 body: { type: statusCodeToType(response.statusCode), message: response.message }
             }
         } catch (e) {
-            // TODO: Error logging
-            console.error(e);
+            log.error("makeVerifyUser ", e);
             return {
                 headers: {
                     'Content-Type': 'application/json'
