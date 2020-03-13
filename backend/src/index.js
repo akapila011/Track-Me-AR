@@ -1,26 +1,27 @@
 import express from 'express';
 import cors from 'cors';
-import {getBaseUrl, isDev} from "./util/config";
+import {getBaseUrl, getDatabaseHost, getDatabaseName, getDatabasePort, isDev} from "./util/config";
 import {locationController, userController} from "./controllers";
 import makeCallback from './middleware/expresscallback';
 import sse from './middleware/sse-middleware';
 import mongoose from "mongoose";
 import {subscribedConnections, onMessageConsumerTrackingSessions} from "./broker/LocationBroker";
 import {locationService} from "./usecases";
+import {log} from "./util/log";
 
 const BASE_URL = getBaseUrl();
 
-mongoose.connect('mongodb://127.0.0.1/trackmeardb', {useNewUrlParser: true}); // TODO: get from .env
+mongoose.connect(`mongodb://${getDatabaseHost()}:${getDatabasePort()}/${getDatabaseName()}`, {useNewUrlParser: true});
 const db = mongoose.connection;
 
 db.on('error', function() {
-    console.error("Unable to connect  too the Database. Cannot start express app!")
+    log.error("Unable to connect  too the Database. Cannot start express app!")
 });
 db.once('open', function() {
     const app = express();
 
     // we're connected!
-    console.log("Connected to database");
+    log.info("Connected to database");
     app.use(cors());
     app.use(express.json());
 
@@ -61,7 +62,7 @@ db.once('open', function() {
 
     if (isDev()){
         app.listen(5000, () => {
-            console.log(`[${new Date().toString()}] Server is listening on port 5000`)
+            log.info(`Server is listening on port 5000`)
         });
     }
 });

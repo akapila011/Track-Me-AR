@@ -25,3 +25,15 @@ export function getBaseUrl() {
 export function getJwtSecretKey() {
     return process.env.JWT_SECRET_KEY;
 }
+
+export function getDatabaseHost() {
+    return process.env.DB_HOST
+}
+
+export function getDatabasePort() {
+    return process.env.DB_PORT
+}
+
+export function getDatabaseName() {
+    return process.env.DB_NAME
+}
