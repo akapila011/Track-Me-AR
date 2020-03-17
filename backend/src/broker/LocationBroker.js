@@ -1,7 +1,7 @@
 import kafka from "kafka-node";
 
 const Producer = kafka.Producer;
-const client = new kafka.KafkaClient({kafkaHost: "127.0.0.1:9042"});
+const client = new kafka.KafkaClient({kafkaHost: "127.0.0.1:9092"}); // TODO: from .env
 
 const kafka_topic = "trackingSessions";
 const payloads = [
@@ -11,7 +11,7 @@ const payloads = [
     }
 ];
 
-const producer = new Producer(client);
+export const producer = new Producer(client);
 producer.on('ready', async function() {
     let push_status = producer.send(payloads, (err, data) => {
         if (err) {
@@ -25,7 +25,7 @@ producer.on('ready', async function() {
 producer.on('error', function(err) {
     console.log(err);
     console.log('[kafka-producer -> '+kafka_topic+']: connection errored');
-    throw err;
+    // throw err;
 });
 
 const Consumer = kafka.Consumer;

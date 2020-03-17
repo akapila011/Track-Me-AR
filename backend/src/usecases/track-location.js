@@ -1,7 +1,8 @@
 import {addSecondsToDate} from "../util/util";
 import {isAuthorizedToModifyTrackingSession} from "./stop-tracking";
+import {producer} from "../broker/LocationBroker";
 
-export function makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb}) {
+export function makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb, publisher}) {
     return async function trackLocation({locationData, userId, trackingSecret}) {
         const response = {
             statusCode: 500,
@@ -44,6 +45,22 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
             trackingId: location.getTrackingId(),
         };
         console.log("Tracking ", locationToSave);
+
+        const payloads = locationToSave;
+        payloads.trackingCode = trackingSession.trackingCode;
+        payloads.startTime = trackingSession.startTime;
+        payloads.endTime = trackingSession.endTime;
+        payloads.isFinished = trackingSession.isFinished(new Date());
+
+        if (publisher) {
+            let push_status = publisher.send(payloads, (err, data) => {
+                if (err) {
+                    log.error('[kafka-producer -> broker update failed');
+                } else {
+                    log.info('[kafka-producer -> broker update success');
+                }
+            });
+        }
 
         let saveResult = await locationsDb.insert(locationToSave);
         response.statusCode = saveResult.httpStatus; // created
