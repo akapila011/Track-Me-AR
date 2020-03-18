@@ -8,6 +8,7 @@ export function makeValidateTrackSession({trackingSessionsDb, locationsDb}) {
         };
 
         const trackingSessions = await trackingSessionsDb.findByTrackingCode(trackingCode);
+        console.log("validate trackingSessions ", trackingSessions);
         if (trackingSessions && trackingSessions.length < 1) {
             response.statusCode = 404;
             response.message = "Could not determine the tracking session";
@@ -26,6 +27,7 @@ export function makeValidateTrackSession({trackingSessionsDb, locationsDb}) {
 
         if (getLatestLocation) {
             const latestLocations = await locationsDb.findLatestByTrackingId(trackingSession.id);
+            console.log("validate findLatestByTrackingId ", latestLocations);
             if (latestLocations && latestLocations.length < 1) {
                 response.statusCode = 404;
                 response.message = `Could not find any location data for session ${trackingCode}`;

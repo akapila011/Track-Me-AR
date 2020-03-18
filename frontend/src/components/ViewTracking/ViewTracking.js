@@ -43,7 +43,7 @@ export class ViewTracking extends Component {
             this.eventSource = new EventSource(`${TRACK_SESSION_URL}/${trackingCode}`);
 
             this.eventSource.addEventListener('message', function(e) {
-                console.log("TRACK_SESSION_URL ", e.data);
+                console.log("TRACK_SESSION_URL message ", e.data);
             }, false)
 
             this.eventSource.addEventListener('open', function(e) {

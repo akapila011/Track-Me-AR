@@ -9,7 +9,7 @@ export function makeFindTrackingSessionUsecase({trackingSessionsDb}) {
             finished: false,
             startTime: null,
             endTime: null,
-            url: null // TODO: once it is working on the frontend
+            url: null
         };
 
         const trackingSessions = await trackingSessionsDb.findByTrackingCode(trackingCode);
@@ -41,7 +41,8 @@ export function makeFindTrackingSessionUsecase({trackingSessionsDb}) {
         response.message = `Tracking session found for ${trackingCode}`;
         response.finished = trackingSession.isFinished(now);
         response.startTime = trackingSession.startTime;
-        response.endTime = trackingSession.endTime;  // TODO: fix this - is 30seocnds more
+        response.endTime = trackingSession.endTime;
+        // response.url = `http://localhost:5001/trackSession/${trackingCode}`;  // need a more dynamic way to avoid host:port
         return response;
     }
 }
