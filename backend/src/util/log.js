@@ -5,8 +5,8 @@ import {isDev} from "./config";
 const consoleTransport = new transports.Console();
 const rotateFileTransport = new (transports.DailyRotateFile)({
     filename: 'trackmear-%DATE%.log',
-    dirName: "logs", // from config
-    datePattern: 'YYYY-MM-DD-HH-ss',
+    dirname: "logs", // from config
+    datePattern: 'YYYY-MM-DD',
     utc: true,
     zippedArchive: true,
     maxSize: '50m',

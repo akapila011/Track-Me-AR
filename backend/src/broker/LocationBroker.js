@@ -1,4 +1,5 @@
 import kafka from "kafka-node";
+import {log} from "../util/log";
 
 const Producer = kafka.Producer;
 const client = new kafka.KafkaClient({kafkaHost: "127.0.0.1:9092"}); // TODO: from .env
@@ -13,13 +14,14 @@ const payloads = [
 
 export const producer = new Producer(client);
 producer.on('ready', async function() {
-    let push_status = producer.send(payloads, (err, data) => {
-        if (err) {
-            console.log('[kafka-producer -> '+kafka_topic+']: broker update failed');
-        } else {
-            console.log('[kafka-producer -> '+kafka_topic+']: broker update success');
-        }
-    });
+    log.info(`Kafka producer read on TODO from env host;port;topic`);
+    // let push_status = producer.send(payloads, (err, data) => {
+    //     if (err) {
+    //         console.log('[kafka-producer -> '+kafka_topic+']: broker update failed');
+    //     } else {
+    //         console.log('[kafka-producer -> '+kafka_topic+']: broker update success');
+    //     }
+    // });
 });
 
 producer.on('error', function(err) {
@@ -67,7 +69,7 @@ export async function onMessageConsumerTrackingSessions(message) {
 }
 
 export async function onErrorConsumerTrackingSessions(message) {
-    console.log('error', err);
+    console.log('error', message);
 }
 
 

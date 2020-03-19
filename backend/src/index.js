@@ -42,12 +42,13 @@ db.once('open', function() {
                 res.sseSetup();
                 const data = {trackingCode: trackingCode, latitude: response.latitude, longitude: response.longitude,
                     finished: response.finished, startTime: response.startTime, endTime: response.endTime,
-                    locationTime: response.locationTime};
+                    time: response.locationTime};
                 res.sseSend(data);
-                if (subscribedConnections.has(trackingCode)) {  // initialize for this trackingSession
+                if (!subscribedConnections.has(trackingCode)) {  // initialize for this trackingSession
                     subscribedConnections.set(trackingCode, []);
                 }
-                subscribedConnections.set(trackingCode, subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()}));
+                const newList = subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()});
+                subscribedConnections.set(trackingCode, newList);
             } else {
                 log.error(`Problem in trackSession/${trackingCode}, response=${response}`);
                 res.type('json');

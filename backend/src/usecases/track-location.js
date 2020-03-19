@@ -1,6 +1,8 @@
 import {addSecondsToDate} from "../util/util";
 import {isAuthorizedToModifyTrackingSession} from "./stop-tracking";
 import {producer} from "../broker/LocationBroker";
+import {log} from "../util/log";
+
 
 export function makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb, publisher}) {
     return async function trackLocation({locationData, userId, trackingSecret}) {
@@ -46,14 +48,22 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
         };
         console.log("Tracking ", locationToSave);
 
-        const payloads = locationToSave;
-        payloads.trackingCode = trackingSession.trackingCode;
-        payloads.startTime = trackingSession.startTime;
-        payloads.endTime = trackingSession.endTime;
-        payloads.isFinished = trackingSession.isFinished(new Date());
 
-        if (publisher) {
-            let push_status = publisher.send(payloads, (err, data) => {
+
+        console.log("publisher != null ", publisher != null);
+        if (publisher != null) {  // publish to queue
+            console.log("GONNA PUBLISH ")
+
+            const data = locationToSave;
+            data.trackingCode = trackingSession.trackingCode;
+            data.startTime = trackingSession.startTime;
+            data.endTime = trackingSession.endTime;
+            data.isFinished = trackingSession.isFinished(new Date());
+            delete data.trackingId;
+
+            const payload = {topic: "trackingSessions", message: JSON.stringify(data)};  // TODO: constants for topic and factory function for data
+            console.log("GONNA PUBLISH THIS ", payload);
+            let push_status = publisher.send([payload], (err, data) => {
                 if (err) {
                     log.error('[kafka-producer -> broker update failed');
                 } else {
