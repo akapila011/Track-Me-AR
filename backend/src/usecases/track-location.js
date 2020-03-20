@@ -50,6 +50,12 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
 
 
 
+
+
+        let saveResult = await locationsDb.insert(locationToSave);
+        response.statusCode = saveResult.httpStatus; // created
+        response.message = saveResult.message;
+
         console.log("publisher != null ", publisher != null);
         if (publisher != null) {  // publish to queue
             console.log("GONNA PUBLISH ")
@@ -61,20 +67,16 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
             data.isFinished = trackingSession.isFinished(new Date());
             delete data.trackingId;
 
-            const payload = {topic: "trackingSessions", message: JSON.stringify(data)};  // TODO: constants for topic and factory function for data
+            const payload = {topic: "trackingSessions", messages: JSON.stringify(data)};  // TODO: constants for topic and factory function for data
             console.log("GONNA PUBLISH THIS ", payload);
             let push_status = publisher.send([payload], (err, data) => {
                 if (err) {
-                    log.error('[kafka-producer -> broker update failed');
+                    log.error('[kafka-producer -> broker publish failed');
                 } else {
-                    log.info('[kafka-producer -> broker update success');
+                    log.info('[kafka-producer -> broker publish success');
                 }
             });
         }
-
-        let saveResult = await locationsDb.insert(locationToSave);
-        response.statusCode = saveResult.httpStatus; // created
-        response.message = saveResult.message;
         return response;
     }
 }

@@ -60,6 +60,10 @@ db.once('open', function() {
             res.status(404).send({type: "error", message: "Error while validating tracking session for real time tracking"});
         })
     });
+    app.get(`/subscribers`, (req, res) => {
+        console.log("subscribedConnections ", subscribedConnections)
+        res.status(200).send({type: "success", sessions: subscribedConnections});
+    });
 
     if (isDev()){
         app.listen(5000, () => {

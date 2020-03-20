@@ -26,7 +26,7 @@ const saveCredential = makeCreateCredential({credentialsDb, createCredential, us
 const verifyUser = makeVerifyUser({usersTempDb, usersDb, createTempUser, createCredential, saveCredential});
 const signinUser = makeSignInUserUsecase({usersDb, credentialsDb, hashing, jwtSign: jwt, jwtSecretKey: getJwtSecretKey()});
 
-const trackLocation = makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb, producer});
+const trackLocation = makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb, publisher: producer});
 const startTracking = makeStartTrackingUsecase({trackingSessionsDb, createTrackingSession , locationsDb, createLocation,
     trackLocationUsecase: trackLocation, durationValidation, codeGenerator});
 const stopTracking = makeStopTrackingUsecase({trackingSessionsDb});

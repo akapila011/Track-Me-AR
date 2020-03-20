@@ -54,7 +54,7 @@ export const subscribedConnections = new Map();  // trackingCode: [{res, subscri
 // TODO: find a way to uniquely identify a res so we don't send to same client
 
 export async function onMessageConsumerTrackingSessions(message) {
-    console.log('consumer message');
+    console.log('consumer message ', message);
     console.log(
         'kafka-> ',
         message.value
