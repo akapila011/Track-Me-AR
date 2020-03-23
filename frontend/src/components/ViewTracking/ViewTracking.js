@@ -21,6 +21,8 @@ export class ViewTracking extends Component {
 
             isGeolocationAvailable: false,
             coords: {}, // latitude & longitude
+
+            tracking: null, // object of session being tracked
         };
     }
 
@@ -44,6 +46,14 @@ export class ViewTracking extends Component {
 
             this.eventSource.addEventListener('message', function(e) {
                 console.log("TRACK_SESSION_URL message ", e.data);
+                try {
+                    const json = JSON.parse(e.data);
+                    if (json.latitude && json.longitude && json.trackingCode && json.time && json.startTime && json.endTime) {
+                        this.setState({tracking: json});
+                    }
+                } catch (e) {
+                    console.error("TRACK_SESSION_URL message ERROR ", e)
+                }
             }, false)
 
             this.eventSource.addEventListener('open', function(e) {
@@ -60,11 +70,15 @@ export class ViewTracking extends Component {
 
     render() {
         const isGeolocationAvailable = this.state.isGeolocationAvailable;
-        const coords = this.state.coords;
+        // const coords = this.state.coords;
+        const coords = null;
 
         const center = coords && coords.latitude && coords.longitude ? [coords.latitude, coords.longitude]: [-1.272007, 36.81425];
         // console.log("center ", center);
         const zoom = coords && coords.latitude && coords.longitude ? 15 : 12;
+
+        const tracking = this.state.tracking;
+        const trackingPos = tracking && tracking.latitude && tracking.longitude ? [tracking.latitude, tracking.longitude] : [];
 
         const viewMap = this.state.view === "map";
         const viewAR = this.state.view === "ar";
@@ -81,24 +95,35 @@ export class ViewTracking extends Component {
                 <span>Location is not supported in your current browser</span>
                 }
                 <Grid item xs={12}>
-                {
-                    viewMap &&
-                    <Container id="map">
-                        <Map center={center} zoom={zoom} width={700} height={450} attribution={false}>
-                            <Marker anchor={center} payload={1} style={{color: "red"}} onClick={({ event, anchor, payload }) => {
-                                console.log("Marker Click ", event)
-                                console.log("Marker Click ", anchor)
-                                console.log("Marker Click ", payload)
-                            }} />
-                        </Map>
-                    </Container>
-                }
-                {
-                    viewAR &&
-                    <Container fixed id="ar">
-                        <img src={arPlaceholder} alt="Augmented Reality" width="1000" height="600"/>
-                    </Container>
-                }
+                    {
+                        viewMap &&
+                        <Container id="map">
+                            <Map center={center} zoom={zoom} width={700} height={450} attribution={false}>
+                                {
+                                    isGeolocationAvailable && coords &&
+                                    <Marker anchor={center} payload={1} style={{color: "red"}} onClick={({ event, anchor, payload }) => {
+                                        console.log("Marker Click ", event)
+                                        console.log("Marker Click ", anchor)
+                                        console.log("Marker Click ", payload)
+                                    }} />
+                                }
+                                {
+                                    tracking && trackingPos.length == 2 &&
+                                    <Marker anchor={trackingPos} payload={1} style={{color: "blue"}} onClick={({ event, anchor, payload }) => {
+                                        console.log("Tracking Click ", event)
+                                        console.log("Tracking Click ", anchor)
+                                        console.log("Tracking Click ", payload)
+                                    }} />
+                                }
+                            </Map>
+                        </Container>
+                    }
+                    {
+                        viewAR &&
+                        <Container fixed id="ar">
+                            <img src={arPlaceholder} alt="Augmented Reality" width="1000" height="600"/>
+                        </Container>
+                    }
                 </Grid>
 
 
