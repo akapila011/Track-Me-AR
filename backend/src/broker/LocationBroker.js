@@ -59,11 +59,14 @@ export async function onMessageConsumerTrackingSessions(message) {
         'kafka-> ',
         message.value
     );
-    if (subscribedConnections.get(message.value)) {
-        const subscribers = subscribedConnections.get(message.value);
+    const json = JSON.parse(message.value);
+    console.log("subscribedConnections.get(json.trackingCode) ", subscribedConnections.get(json.trackingCode))
+    if (subscribedConnections.get(json.trackingCode)) {
+        const subscribers = subscribedConnections.get(json.trackingCode);
         for(let i = 0; i < subscribers.length; i++) {
             const {res, subscribedAt} = subscribers[i];
-            res.sseSend(message.value);
+            console.log("PUSHING TO CONNECTION at " + subscribedAt);
+            res.sseSend(json);
         }
     }
 }

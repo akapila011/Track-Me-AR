@@ -45,10 +45,13 @@ db.once('open', function() {
                     time: response.locationTime};
                 res.sseSend(data);
                 if (!subscribedConnections.has(trackingCode)) {  // initialize for this trackingSession
-                    subscribedConnections.set(trackingCode, []);
+                    subscribedConnections.set(trackingCode, [{res: res, subscribedAt: new Date()}]);// TODO: figure why array is overwritten with value 1
+                    console.log("subscribedConnections setting ", trackingCode);
+                    console.log("subscribedConnections keys ", subscribedConnections.keys());
                 }
-                const newList = subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()});
-                subscribedConnections.set(trackingCode, newList);
+                // console.log("subscribedConnections.get(trackingCode) ", subscribedConnections.get(trackingCode));
+                // const newList = subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()});
+                // subscribedConnections.set(trackingCode, newList);
             } else {
                 log.error(`Problem in trackSession/${trackingCode}, response=${response}`);
                 res.type('json');
@@ -57,7 +60,7 @@ db.once('open', function() {
         }).catch((error) => {
             log.error(`Error while validateTrackSessionUsecase in /trackingSession/${trackingCode}: ${error}`);
             res.type('json');
-            res.status(404).send({type: "error", message: "Error while validating tracking session for real time tracking"});
+            res.status(500).send({type: "error", message: "Error while validating tracking session for real time tracking"});
         })
     });
     app.get(`/subscribers`, (req, res) => {

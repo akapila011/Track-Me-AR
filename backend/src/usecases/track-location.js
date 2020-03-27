@@ -60,7 +60,7 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
         if (publisher != null) {  // publish to queue
             console.log("GONNA PUBLISH ")
 
-            const data = locationToSave;
+            const data = locationToSave;  // TODO: Maybe need to handle it so that payloads are consistent with starting one
             data.trackingCode = trackingSession.trackingCode;
             data.startTime = trackingSession.startTime;
             data.endTime = trackingSession.endTime;
@@ -71,9 +71,9 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
             console.log("GONNA PUBLISH THIS ", payload);
             let push_status = publisher.send([payload], (err, data) => {
                 if (err) {
-                    log.error('[kafka-producer -> broker publish failed');
+                    log.error('[kafka-producer -> broker publish failed ' + err);
                 } else {
-                    log.info('[kafka-producer -> broker publish success');
+                    log.info('[kafka-producer -> broker publish success, data: ' + data);
                 }
             });
         }
