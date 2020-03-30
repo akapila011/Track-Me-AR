@@ -41,6 +41,7 @@ export class ViewTracking extends Component {
             });
         }
 
+        const _this = this;
         if (!!window.EventSource && trackingCode) {
             this.eventSource = new EventSource(`${TRACK_SESSION_URL}/${trackingCode}`);
 
@@ -49,7 +50,7 @@ export class ViewTracking extends Component {
                 try {
                     const json = JSON.parse(e.data);
                     if (json.latitude && json.longitude && json.trackingCode && json.time && json.startTime && json.endTime) {
-                        this.setState({tracking: json});
+                        _this.setState({tracking: json});
                     }
                 } catch (e) {
                     console.error("TRACK_SESSION_URL message ERROR ", e)
