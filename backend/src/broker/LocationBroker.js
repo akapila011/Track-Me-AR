@@ -35,7 +35,7 @@ const consumer = new Consumer(
     client,
     [{ topic: "trackingSessions", partition: 0 }],
     {
-        autoCommit: false,
+        autoCommit: true, // TODO: test and try out
         fetchMaxWaitMs: 2000,
         fetchMaxBytes: 1024 * 1024,
         encoding: 'utf8',
@@ -60,7 +60,7 @@ export async function onMessageConsumerTrackingSessions(message) {
         message.value
     );
     const json = JSON.parse(message.value);
-    console.log("subscribedConnections.get(json.trackingCode) ", subscribedConnections.get(json.trackingCode))
+    console.log("subscribedConnections.get(json.trackingCode) ", subscribedConnections.get(json.trackingCode));
     if (subscribedConnections.get(json.trackingCode)) {
         const subscribers = subscribedConnections.get(json.trackingCode);
         for(let i = 0; i < subscribers.length; i++) {
@@ -72,7 +72,7 @@ export async function onMessageConsumerTrackingSessions(message) {
 }
 
 export async function onErrorConsumerTrackingSessions(message) {
-    console.log('error', message);
+    console.log('onErrorConsumerTrackingSessions error', message);
 }
 
 

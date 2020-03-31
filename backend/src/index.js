@@ -45,13 +45,14 @@ db.once('open', function() {
                     time: response.locationTime};
                 res.sseSend(data);
                 if (!subscribedConnections.has(trackingCode)) {  // initialize for this trackingSession
-                    subscribedConnections.set(trackingCode, [{res: res, subscribedAt: new Date()}]);// TODO: figure why array is overwritten with value 1
-                    console.log("subscribedConnections setting ", trackingCode);
-                    console.log("subscribedConnections keys ", subscribedConnections.keys());
+                    subscribedConnections.set(trackingCode, []);// TODO: figure why array is overwritten with value 1
+                    // {res: res, subscribedAt: new Date()}
+                    // console.log("subscribedConnections setting ", trackingCode);
+                    // console.log("subscribedConnections keys ", subscribedConnections.keys());
+                    // console.log("subscribedConnections ",trackingCode,  subscribedConnections.get(trackingCode));
                 }
                 // console.log("subscribedConnections.get(trackingCode) ", subscribedConnections.get(trackingCode));
-                // const newList = subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()});
-                // subscribedConnections.set(trackingCode, newList);
+                subscribedConnections.get(trackingCode).push({res: res, subscribedAt: new Date()})
             } else {
                 log.error(`Problem in trackSession/${trackingCode}, response=${response}`);
                 res.type('json');

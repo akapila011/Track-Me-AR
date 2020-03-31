@@ -26,7 +26,7 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
             return response;
         }
         trackingSessionData.endTime = addSecondsToDate(trackingSessionData.startTime, duration);
-        trackingSessionData.updateInterval = 30; // TODO: see how to vary this later
+        trackingSessionData.updateInterval = 10; // TODO: see how to vary this later
         trackingSessionData.forceStoppedAt = null;
 
         const trackingSession = createTrackingSession(trackingSessionData);
