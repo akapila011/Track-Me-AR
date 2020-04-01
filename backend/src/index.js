@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import {subscribedConnections, onMessageConsumerTrackingSessions} from "./broker/LocationBroker";
 import {locationService} from "./usecases";
 import {log} from "./util/log";
+import {buildPublishPayloadObject} from "./util/dataBuilder";
 
 const BASE_URL = getBaseUrl();
 
@@ -40,9 +41,9 @@ db.once('open', function() {
         locationService.validateTrackSessionUsecase({trackingCode: trackingCode, getLatestLocation: true}).then((response) => {
             if (response.statusCode === 200 && response.latitude && response.longitude) {
                 res.sseSetup();
-                const data = {trackingCode: trackingCode, latitude: response.latitude, longitude: response.longitude,
+                const data = buildPublishPayloadObject({trackingCode: trackingCode, latitude: response.latitude, longitude: response.longitude,
                     finished: response.finished, startTime: response.startTime, endTime: response.endTime,
-                    time: response.locationTime};
+                    time: response.locationTime});
                 res.sseSend(data);
                 if (!subscribedConnections.has(trackingCode)) {  // initialize for this trackingSession
                     subscribedConnections.set(trackingCode, []);// TODO: figure why array is overwritten with value 1

@@ -2,6 +2,7 @@ import {addSecondsToDate} from "../util/util";
 import {isAuthorizedToModifyTrackingSession} from "./stop-tracking";
 import {producer} from "../broker/LocationBroker";
 import {log} from "../util/log";
+import {buildPublishPayloadObject} from "../util/dataBuilder";
 
 
 export function makeTrackLocationUsecase({locationsDb, createLocation, trackingSessionsDb, publisher}) {
@@ -60,12 +61,12 @@ export function makeTrackLocationUsecase({locationsDb, createLocation, trackingS
         if (publisher != null) {  // publish to queue
             console.log("GONNA PUBLISH ")
 
-            const data = locationToSave;  // TODO: Maybe need to handle it so that payloads are consistent with starting one
-            data.trackingCode = trackingSession.trackingCode;
-            data.startTime = trackingSession.startTime;
-            data.endTime = trackingSession.endTime;
-            data.isFinished = trackingSession.isFinished(new Date());
-            delete data.trackingId;
+            const data = buildPublishPayloadObject(
+                {trackingCode: trackingSession.trackingCode,
+                latitude: response.latitude, longitude: response.longitude,
+                finished: trackingSession.isFinished(new Date()),
+                    startTime: trackingSession.startTime, endTime: trackingSession.endTime,
+                time: response.locationTime});
 
             const payload = {topic: "trackingSessions", messages: JSON.stringify(data)};  // TODO: constants for topic and factory function for data
             console.log("GONNA PUBLISH THIS ", payload);
