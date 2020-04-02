@@ -390,7 +390,9 @@ export default class Home extends Component {
                   
               </Grid>
               <Grid item xs={7}>
-                  <ViewTracking/>
+                  <ViewTracking
+                      trackingCode={isSessionFound ? this.state.foundSession.trackingCode : null}
+                  />
               </Grid>
 
           </Grid>
