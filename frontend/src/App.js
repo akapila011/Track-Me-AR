@@ -43,9 +43,11 @@ class App extends Component {
     }
 
     render() {
+        const isLoggedIn = this.state.userId !== "";
         return (
             <BrowserRouter>
                 <NavBar
+                    isLoggedIn={isLoggedIn}
                     userId={this.state.userId}
                     email={this.state.email}
                     name={this.state.name}
@@ -56,7 +58,9 @@ class App extends Component {
                 <Grid>
                     <Route exact={true} path='/' render={() => (
                         <div className="App">
-                            <Home/>
+                            <Home
+                                isLoggedIn={isLoggedIn}
+                            />
                         </div>
                     )}/>
                     <Route path="/view/:trackingCode" render={({match}) => (
@@ -103,7 +107,7 @@ class NavBar extends Component {
     }
 
     render() {
-        const isLoggedIn = this.props.userId !== "";
+        const isLoggedIn = this.props.isLoggedIn;
         return (
             <AppBar position="static" style={{backgroundColor: "#FFFFFF", marginBottom: 50}}>
                 <Toolbar>

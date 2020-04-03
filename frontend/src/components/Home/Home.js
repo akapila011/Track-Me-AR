@@ -10,6 +10,10 @@ import {FIND_TRACKING_SESSION_URL, START_TRACKING_URL, STOP_TRACKING_URL, TRACK_
 import Snackbar from '@material-ui/core/Snackbar';
 import Countdown from 'react-countdown';
 import {ConfirmDialog} from "../SharedComponents/ConfirmationDialog";
+import InputLabel from '@material-ui/core/InputLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import NativeSelect from '@material-ui/core/NativeSelect';
+
 
 export default class Home extends Component {
     constructor(props) {
@@ -31,7 +35,8 @@ export default class Home extends Component {
                 value: "",
                 error: false,
                 helperText: ""
-            }
+            },
+            trackingPeriod: 10,
         };
     }
 
@@ -44,6 +49,7 @@ export default class Home extends Component {
             const sendData = {
                 latitude: latitude,
                 longitude: longitude,
+                trackingPeriod: this.state.trackingPeriod
             };
             this.startTracking(sendData);
         }, (error) => {
@@ -338,6 +344,26 @@ export default class Home extends Component {
                               >
                                   Start Tracking Me
                               </Button>
+                              {
+                                  this.props.isLoggedIn &&
+                                  <Grid id="trackingPeriodSelection"
+                                        container
+                                        direction="column"
+                                        justify="center"
+                                        alignItems="center"
+                                  >
+                                      <NativeSelect
+                                          value={this.state.trackingPeriod}
+                                          onChange={(event) => {this.setState({trackingPeriod: event.target.value});}}
+
+                                      >
+                                          <option value={10}>Ten minutes</option>
+                                          <option value={20}>Twenty minutes</option>
+                                          <option value={30}>Thirty minutes</option>
+                                      </NativeSelect>
+                                      <FormHelperText>Select how long you want to be track for</FormHelperText>
+                                  </Grid>
+                              }
 
                               <br/>
                               <br/>
