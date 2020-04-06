@@ -6,7 +6,13 @@ export function makeStartTracking ({ startTrackingUsecase }) {
             const userBody = httpRequest.body;
 
             const loggedInData = getJwtObjectFromHttpRequest(httpRequest); // optional data
-            const response = await startTrackingUsecase({userId: loggedInData.userId, latitude: userBody.latitude, longitude: userBody.longitude, duration: 1800});  // TODO: make duration flexible for logged in users
+            const response = await startTrackingUsecase(
+                {
+                    userId: loggedInData.userId,
+                    latitude: userBody.latitude,
+                    longitude: userBody.longitude,
+                    duration: userBody.trackingPeriod
+                });
             return {
                 headers: {
                     'Content-Type': 'application/json',

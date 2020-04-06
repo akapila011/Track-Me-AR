@@ -19,6 +19,7 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
         trackingSessionData.trackingSecret = trackingSessionData.userId ? null : generateUUID();
         trackingSessionData.startTime = new Date();
 
+        duration = userId ? duration ? duration : 600 : 600;  // if logged in use sent duration, if not sent use default, if not logged in default
         const durationValidationResult = durationValidation.isValidTrackingDuration(duration);
         if (!durationValidationResult.valid) {
             response.statusCode = 400;
@@ -26,7 +27,7 @@ export function makeStartTrackingUsecase({trackingSessionsDb, createTrackingSess
             return response;
         }
         trackingSessionData.endTime = addSecondsToDate(trackingSessionData.startTime, duration);
-        trackingSessionData.updateInterval = 10; // TODO: see how to vary this later
+        trackingSessionData.updateInterval = 20; // TODO: see how to vary this later
         trackingSessionData.forceStoppedAt = null;
 
         const trackingSession = createTrackingSession(trackingSessionData);

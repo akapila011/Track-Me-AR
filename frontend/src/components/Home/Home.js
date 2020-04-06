@@ -357,9 +357,9 @@ export default class Home extends Component {
                                           onChange={(event) => {this.setState({trackingPeriod: event.target.value});}}
 
                                       >
-                                          <option value={10}>Ten minutes</option>
-                                          <option value={20}>Twenty minutes</option>
-                                          <option value={30}>Thirty minutes</option>
+                                          <option value={600}>Ten minutes</option>
+                                          <option value={1200}>Twenty minutes</option>
+                                          <option value={1800}>Thirty minutes</option>
                                       </NativeSelect>
                                       <FormHelperText>Select how long you want to be track for</FormHelperText>
                                   </Grid>
