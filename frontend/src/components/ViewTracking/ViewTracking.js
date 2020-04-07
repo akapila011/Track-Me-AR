@@ -122,7 +122,20 @@ export class ViewTracking extends Component {
                     {
                         viewAR &&
                         <Container fixed id="ar">
-                            <img src={arPlaceholder} alt="Augmented Reality" width="1000" height="600"/>
+                            {/*<img src={arPlaceholder} alt="Augmented Reality" width="1000" height="600"/>*/}
+                            <a-scene
+                                vr-mode-ui="enabled: false"
+                                embedded
+                                arjs="sourceType: webcam; debugUIEnabled: false;"
+                            >
+                                <a-text
+                                    value="This content will always face you."
+                                    look-at="[gps-camera]"
+                                    scale="120 120 120"
+                                    gps-entity-place="latitude: <add-your-latitude>; longitude: <add-your-longitude>;"
+                                >You!</a-text>
+                                <a-camera gps-camera rotation-reader> </a-camera>
+                            </a-scene>
                         </Container>
                     }
                 </Grid>
