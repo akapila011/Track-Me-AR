@@ -71,12 +71,13 @@ export class ViewTracking extends Component {
 
     render() {
         const isGeolocationAvailable = this.state.isGeolocationAvailable;
-        // const coords = this.state.coords;
-        const coords = null;
+        const coords = this.state.coords;
+        // const coords = null;
 
         const center = coords && coords.latitude && coords.longitude ? [coords.latitude, coords.longitude]: [-1.272007, 36.81425];
         // console.log("center ", center);
         const zoom = coords && coords.latitude && coords.longitude ? 15 : 12;
+        const center_gps_entity = `latitude: ${center[0]}; longitude: ${center[0]};`;
 
         const tracking = this.state.tracking;
         const trackingPos = tracking && tracking.latitude && tracking.longitude ? [tracking.latitude, tracking.longitude] : [];
@@ -132,7 +133,7 @@ export class ViewTracking extends Component {
                                     value="This content will always face you."
                                     look-at="[gps-camera]"
                                     scale="120 120 120"
-                                    gps-entity-place="latitude: <add-your-latitude>; longitude: <add-your-longitude>;"
+                                    gps-entity-place=center_gps_entity
                                 >You!</a-text>
                                 <a-camera gps-camera rotation-reader> </a-camera>
                             </a-scene>
