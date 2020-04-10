@@ -261,7 +261,7 @@ export default class Home extends Component {
                 alignItems="center"
           >
               <Grid item xs={5}>
-                  <h2 style={{marginBottom: "30%"}}>Track Me AR</h2>
+                  <h2 style={{marginBottom: "30%"}}>Track Me</h2>
                   <Snackbar
                       open={this.state.message}
                       onClose={() => {this.setState({message: "", messageType: ""});}}
