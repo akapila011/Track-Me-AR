@@ -23,6 +23,10 @@ LocationSchema.statics = {
         return await this.find({trackingId: trackingId}).limit(1).exec();
     },
 
+    async locationsByTrackingSessions(trackingSessionIds) {
+        return await this.find({trackingId: {$in: trackingSessionIds}}).exec();
+    },
+
     async findLatestByTrackingId(trackingId) {
         return await this.find({trackingId: trackingId})
             .sort('-time')

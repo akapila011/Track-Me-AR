@@ -47,3 +47,7 @@ export const locationService = Object.freeze({
     findTrackingSessionUsecase: findTrackingSession,
     validateTrackSessionUsecase: validateTrackSession
 });
+
+export const historyService = Object.freeze({
+    // findSessionsByDateForUserUsecase: findSessionsByDateForUser,
+});
