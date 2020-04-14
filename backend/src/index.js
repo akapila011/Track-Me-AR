@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import {getBaseUrl, getDatabaseHost, getDatabaseName, getDatabasePort, isDev} from "./util/config";
-import {locationController, userController} from "./controllers";
+import {locationController, userController, historyController} from "./controllers";
 import makeCallback from './middleware/expresscallback';
 import sse from './middleware/sse-middleware';
 import mongoose from "mongoose";
@@ -69,6 +69,8 @@ db.once('open', function() {
         console.log("subscribedConnections ", subscribedConnections)
         res.status(200).send({type: "success", sessions: subscribedConnections});
     });
+
+    app.post(`/userSessions`, makeCallback(historyController.findSessionsByDateUserController));
 
     if (isDev()){
         app.listen(5000, () => {

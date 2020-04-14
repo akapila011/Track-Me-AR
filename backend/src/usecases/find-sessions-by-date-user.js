@@ -1,4 +1,4 @@
-import {addSecondsToDate} from "../util/util";
+import {addSecondsToDate, isValidDate} from "../util/util";
 
 export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
     return async function findSessionsByDateUser({filterDate, userId}) {
@@ -8,6 +8,12 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
             filterDate: filterDate,
             trackingSessions: [],  // list of objects {trackingCode: "xyz", locations: [{latitude: 1, longitude: 2, time}]
         };
+
+        if (!isValidDate(filterDate)) {
+            response.statusCode = 400;
+            response.message = "Invalid filter date";
+            return response;
+        }
 
         if (!userId) { // not logged in
             response.statusCode = 403;

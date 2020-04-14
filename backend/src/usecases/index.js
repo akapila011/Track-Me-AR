@@ -18,6 +18,7 @@ import {makeStopTrackingUsecase} from "./stop-tracking";
 import {makeFindTrackingSessionUsecase} from "./find-tracking-session";
 import {makeValidateTrackSession} from "./validate-track-session";
 import {producer} from "../broker/LocationBroker";
+import {makeFindSessionsByDateUser} from "./find-sessions-by-date-user";
 
 
 // const saveUser = makeSaveUser({usersTempDb});
@@ -33,6 +34,7 @@ const stopTracking = makeStopTrackingUsecase({trackingSessionsDb});
 const findTrackingSession = makeFindTrackingSessionUsecase({trackingSessionsDb});
 const validateTrackSession = makeValidateTrackSession({trackingSessionsDb, locationsDb});
 
+const findSessionsByDateUser = makeFindSessionsByDateUser({trackingSessionsDb, locationsDb});
 
 export const userService = Object.freeze({
   saveTempUser: saveTempUser,
@@ -49,5 +51,5 @@ export const locationService = Object.freeze({
 });
 
 export const historyService = Object.freeze({
-    // findSessionsByDateForUserUsecase: findSessionsByDateForUser,
+    findSessionsByDateUserUsecase: findSessionsByDateUser,
 });
