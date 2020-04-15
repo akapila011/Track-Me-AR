@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import ViewSession from "./components/ViewSession/ViewSession";
 import {SIGN_IN_URL, SIGN_UP_URL, VERIFY_USER_URL} from "./util/urls";
 import {loadIdentityToState, removeIdentity, setIdentity, showMessage, startLoader, stopLoader} from "./util/util";
+import History from "./components/History/History";
 
 class App extends Component {
     constructor(props) {
@@ -62,6 +63,13 @@ class App extends Component {
                                 isLoggedIn={isLoggedIn}
                             />
                         </div>
+                    )}/>
+                    <Route exact={true} path='/history' render={() => (
+                        <History
+                            isLoggedIn={isLoggedIn}
+                            email={this.state.email}
+                            name={this.state.name}
+                        />
                     )}/>
                     <Route path="/view/:trackingCode" render={({match}) => (
                         <ViewSession

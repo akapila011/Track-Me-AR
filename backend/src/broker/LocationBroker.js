@@ -24,7 +24,7 @@ producer.on('ready', async function() {
     // });
 });
 
-producer.on('error', function(err) {
+producer.on('error', function(err) {  //TODO: handle retries from here
     console.log(err);
     console.log('[kafka-producer -> '+kafka_topic+']: connection errored');
     // throw err;
