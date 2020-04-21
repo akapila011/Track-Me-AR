@@ -11,6 +11,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {SearchResults} from "./SearchResults";
+import {DetailView} from "./DetailView";
 
 export default class History extends Component {
     constructor(props) {
@@ -110,63 +112,6 @@ export default class History extends Component {
                 </Grid>
 
             </Grid>
-        )
-    }
-}
-
-class TrackingSessionsRow extends Component {
-    render() {
-        const {id, key, trackingCode, startTime, duration, endTime} = this.props.item;
-        return (
-            <TableRow id={id} key={key}>
-                <TableCell>{trackingCode}</TableCell>
-                <TableCell align="right">{startTime}</TableCell>
-                <TableCell align="right">{duration}</TableCell>
-                <TableCell align="right">{endTime}</TableCell>
-                <TableCell align="right" onClick={this.props.expandDetails}> <ChevronRightIcon/></TableCell>
-            </TableRow>
-        );
-    }
-}
-
-class SearchResults extends Component {
-    render() {
-        const trackingSessions = this.props.trackingSessions;
-        return (
-            <div>
-                <form noValidate>
-                    <TextField
-                        id="datetime-local"
-                        label="Filter Date"
-                        type="datetime-local"
-                        defaultValue={new Date()}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </form>
-                <TableContainer component={Paper}>
-                    <Table aria-label="customized table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Tracking Code</TableCell>
-                                <TableCell align="right">Started</TableCell>
-                                <TableCell align="right">Duration</TableCell>
-                                <TableCell align="right">Ended</TableCell>
-                                <TableCell align="right"></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {trackingSessions.map((row) => (
-                                <TrackingSessionsRow
-                                    item={row}
-                                    expandDetails={() => {this.props.expandDetails(row);}}
-                                />
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </div>
         )
     }
 }
