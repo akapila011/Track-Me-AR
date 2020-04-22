@@ -13,6 +13,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {SearchResults} from "./SearchResults";
 import {DetailView} from "./DetailView";
+import {getJwt, showMessage, startLoader, stopLoader} from "../../util/util";
+import axios from "axios";
+import {START_TRACKING_URL} from "../../util/urls";
+import {isArray} from "../../../../backend/src/util/util";
 
 export default class History extends Component {
     constructor(props) {
@@ -42,7 +46,32 @@ export default class History extends Component {
     }
 
     findSessionsByDate() {
-
+        const sendData = {filterDate: this.state.filterDate};
+        startLoader(this);
+        axios({
+            method: "POST",
+            url: USER_SESSIONS_URL,
+            timeout: 10000,
+            data: sendData,
+            headers: {"Authorization": `Bearer ${getJwt()}`},
+        }).then((response) => {
+            // console.log("findSessionsByDate response ", response);
+            let data = response.data;
+            if (data.type === "success" && isArray(data.trackingSessions)) {
+                showMessage(this, data.type, data.message);
+                this.setState({trackingSessions: data.trackingSessions});
+            }
+        }).catch((error) => {
+            console.error(error.message);
+            if (error.response && error.response.status && error.response.data && error.response.data.type && error.response.data.message) {
+                console.error(error.response.data.type, error.response.data.message);
+                showMessage(this, error.response.data.type, error.response.data.message);
+                return;
+            }
+            showMessage(this, "error", error.message);
+        }).finally(() => {
+            stopLoader(this);
+        });  // end axios
     }
 
     dateChanged(date) {
