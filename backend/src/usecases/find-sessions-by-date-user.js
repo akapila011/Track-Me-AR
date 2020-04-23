@@ -1,4 +1,4 @@
-import {addSecondsToDate, isValidDate} from "../util/util";
+import {isValidDate} from "../util/util";
 
 export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
     return async function findSessionsByDateUser({filterDate, userId}) {
@@ -9,7 +9,8 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
             trackingSessions: [],  // list of objects {trackingCode: "xyz", locations: [{latitude: 1, longitude: 2, time}]
         };
 
-        if (!isValidDate(filterDate)) {
+        const parsedFilterDate = new Date(filterDate);
+        if (!isValidDate(parsedFilterDate)) {
             response.statusCode = 400;
             response.message = "Invalid filter date";
             return response;
@@ -21,10 +22,10 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
             return response;
         }
 
-        const trackingSessions = await trackingSessionsDb.findByDateUser(filterDate, userId);
+        const trackingSessions = await trackingSessionsDb.findByDateUser(parsedFilterDate, userId);
         if (trackingSessions && trackingSessions.length < 1) {
-            response.statusCode = 404;
-            response.message = `No Tracking Sessions found on ${filterDate}`;
+            response.statusCode = 200;
+            response.message = `No Tracking Sessions found on ${parsedFilterDate}`;
             return response;
         }
 

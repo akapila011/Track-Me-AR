@@ -1,22 +1,13 @@
 import React, {Component} from 'react';
-import {Grid, TextField} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import {ViewTracking} from "../ViewTracking/ViewTracking";
 import Snackbar from '@material-ui/core/Snackbar';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {SearchResults} from "./SearchResults";
 import {DetailView} from "./DetailView";
-import {getJwt, showMessage, startLoader, stopLoader} from "../../util/util";
+import {getJwt, isArray, showMessage, startLoader, stopLoader} from "../../util/util";
 import axios from "axios";
-import {START_TRACKING_URL} from "../../util/urls";
-import {isArray} from "../../../../backend/src/util/util";
+import {USER_SESSIONS_URL} from "../../util/urls";
+
 
 export default class History extends Component {
     constructor(props) {
@@ -42,7 +33,10 @@ export default class History extends Component {
             ], // results from server for the date
             trackingSession: null,  // object holding all info for a selected tracking session
         };
-        this.dateChanged.bind(this);
+    }
+
+    componentDidMount() {
+        this.findSessionsByDate();
     }
 
     findSessionsByDate() {

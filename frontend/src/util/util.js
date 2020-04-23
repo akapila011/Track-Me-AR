@@ -59,3 +59,7 @@ export function loadIdentityToState(self) {
 export function isValidDate(date) {
     return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
 }
+
+export function isArray(variable) {
+    return Array.isArray(variable);
+}
