@@ -36,11 +36,11 @@ export default class History extends Component {
     }
 
     componentDidMount() {
-        this.findSessionsByDate();
+        this.findSessionsByDate(this.state.filterDate);
     }
 
-    findSessionsByDate() {
-        const sendData = {filterDate: this.state.filterDate};
+    findSessionsByDate(filterDate) {
+        const sendData = {filterDate: filterDate};
         startLoader(this);
         axios({
             method: "POST",
@@ -110,6 +110,7 @@ export default class History extends Component {
                         <div>
                             {   view === "results" &&
                             <SearchResults
+                                filterDate={filterDate}
                                 trackingSessions={trackingSessions}
                                 dateChanged={this.dateChanged.bind(this)}
                                 expandDetails={this.expandDetails.bind(this)}

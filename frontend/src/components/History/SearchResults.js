@@ -2,26 +2,35 @@ import React, {Component} from "react";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import {TextField} from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
+import Grid from "@material-ui/core/Grid";
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker,
+} from '@material-ui/pickers';
 
 export class SearchResults extends Component {
     render() {
         const trackingSessions = this.props.trackingSessions;
         return (
-            <div>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container justify="space-around">
                 <form noValidate>
-                    <TextField
-                        id="datetime-local"
-                        label="Filter Date"
-                        type="datetime-local"
-                        defaultValue={new Date()}
-                        InputLabelProps={{
-                            shrink: true,
+                    <KeyboardDatePicker
+                        margin="normal"
+                        id="filter-date-picker-dialog"
+                        label="Filter date"
+                        format="dd/MM/yyyy"
+                        value={this.props.filterDate}
+                        onChange={this.props.dateChanged}
+                        KeyboardButtonProps={{
+                            'aria-label': 'Change Filter Date',
                         }}
                     />
                 </form>
@@ -46,7 +55,8 @@ export class SearchResults extends Component {
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </div>
+            </Grid>
+            </MuiPickersUtilsProvider>
         )
     }
 }
