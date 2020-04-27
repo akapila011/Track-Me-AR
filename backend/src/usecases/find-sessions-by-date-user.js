@@ -1,4 +1,4 @@
-import {isValidDate} from "../util/util";
+import {getDayEnd, getDayStart, getDisplayDate, isValidDate} from "../util/util";
 
 export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
     return async function findSessionsByDateUser({filterDate, userId}) {
@@ -22,7 +22,9 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
             return response;
         }
 
-        const trackingSessions = await trackingSessionsDb.findByDateUser(parsedFilterDate, userId);
+        const dayStart = getDayStart(parsedFilterDate);
+        const dayEnd = getDayEnd(parsedFilterDate);
+        const trackingSessions = await trackingSessionsDb.findBetweenTimesForUser(dayStart, dayEnd, userId);
         if (trackingSessions && trackingSessions.length < 1) {
             response.statusCode = 200;
             response.message = `No Tracking Sessions found on ${parsedFilterDate}`;
@@ -34,7 +36,7 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
 
         const constructedData = {};  // trackingId: {trackingCode, startTime, endTime, forceStoppedAt, locations: []}
         trackingSessions.forEach(session => {
-            if (!session.id) {
+            if (!constructedData[session.id]) {
                 constructedData[session.id] = {
                     trackingCode: session.trackingCode,
                     startTime: session.startTime,
@@ -56,11 +58,11 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
             }
         });
 
-        constructedData.trackingSessions =  Object.values(constructedData);
+        response.trackingSessions =  Object.values(constructedData);
 
         // return only if still on going - active
         response.statusCode = 200;
-        response.message = `Found ${response.trackingSessions.length} sessions on ${filterDate}`;
+        response.message = `Found ${response.trackingSessions.length} sessions on ${getDisplayDate(parsedFilterDate)}`;
         return response;
     }
 }

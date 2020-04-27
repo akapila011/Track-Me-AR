@@ -9,8 +9,8 @@ export function makeTrackingSessionsDb ({ TrackingSessionModel }) {
         return await TrackingSessionModel.findByTrackingCode(trackingCode);
     }
 
-    async function findByDateUser(date, userId) {
-        return await TrackingSessionModel.findByDateUser(date, userId);
+    async function findBetweenTimesForUser(start, end, userId) {
+        return await TrackingSessionModel.findBetweenTimesForUser(start, end, userId);
     }
 
     async function insert (trackingSession) {
@@ -42,7 +42,7 @@ export function makeTrackingSessionsDb ({ TrackingSessionModel }) {
     return Object.freeze({
         findById,
         findByTrackingCode,
-        findByDateUser,
+        findBetweenTimesForUser,
         insert,
         update,
         remove

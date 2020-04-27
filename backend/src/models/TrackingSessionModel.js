@@ -28,8 +28,8 @@ TrackingSessionSchema.statics = {
     async findByTrackingCode(trackingCode) {
         return await this.find({trackingCode: trackingCode}).limit(1).exec();
     },
-    async findByDateUser(date, userId) {
-        return await this.find({startTime: date, userId: userId}).exec();
+    async findBetweenTimesForUser(start, end, userId) {
+        return await this.find({userId: userId, startTime: {$gte: start, $lte: end}}).exec();
     }
 
 };

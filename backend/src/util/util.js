@@ -99,3 +99,23 @@ export function getJwtObjectFromHttpRequest(httpRequest) {  // returns {} or obj
     }
     return token;
 }
+
+export function getDayStart(date) {
+    const newDate = new Date(date);
+    newDate.setHours(0,0,0,0);
+    return newDate;
+}
+
+export function getDayEnd(date) {
+    const newDate = new Date(date);
+    newDate.setHours(23,59,59,999);
+    return newDate;
+}
+
+export function getDisplayDate(date) {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy = date.getFullYear();
+
+    return  dd + '/' + mm + '/' + yyyy;
+}
