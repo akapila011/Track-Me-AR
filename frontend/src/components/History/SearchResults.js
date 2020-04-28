@@ -14,10 +14,12 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
+import {isArray} from "../../util/util";
 
 export class SearchResults extends Component {
     render() {
         const trackingSessions = this.props.trackingSessions;
+        const isTrackingSessionsEmpty = !isArray(trackingSessions) || trackingSessions.length < 1;
         return (
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-around">
@@ -45,14 +47,24 @@ export class SearchResults extends Component {
                                 <TableCell align="right"></TableCell>
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            {trackingSessions.map((row) => (
-                                <TrackingSessionsRow
-                                    item={row}
-                                    expandDetails={() => {this.props.expandDetails(row);}}
-                                />
-                            ))}
-                        </TableBody>
+                        {
+                            !isTrackingSessionsEmpty &&
+                            <TableBody>
+                                {trackingSessions.map((row) => (
+                                    <TrackingSessionsRow
+                                        item={row}
+                                        expandDetails={() => {this.props.expandDetails(row);}}
+                                    />
+                                ))}
+                            </TableBody>
+                        }
+                        {   isTrackingSessionsEmpty &&
+                            <TableBody>
+                                <TableRow id={"noTrackingSessions"} key={"noTrackingSessions"}>
+                                    <TableCell colSpan={5} align="center" style={{color: "orange"}}>No Tracking Sessions Found</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        }
                     </Table>
                 </TableContainer>
             </Grid>

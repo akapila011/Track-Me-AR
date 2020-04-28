@@ -11,7 +11,7 @@ export function makeStartTracking ({ startTrackingUsecase }) {
                     userId: loggedInData.userId,
                     latitude: userBody.latitude,
                     longitude: userBody.longitude,
-                    duration: userBody.trackingPeriod
+                    duration: userBody.trackingPeriod * 60
                 });
             return {
                 headers: {

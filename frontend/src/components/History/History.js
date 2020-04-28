@@ -98,7 +98,7 @@ export default class History extends Component {
                   alignItems="center"
             >
 
-                <Grid item xs={5} style={{paddingLeft: "1%"}}>
+                <Grid item xs={5} style={{paddingLeft: "1%", height: "100%"}}>
                     <h2>{this.props.name || this.props.email} Tracking History</h2>
                     <Snackbar
                         open={this.state.message}

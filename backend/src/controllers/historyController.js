@@ -17,13 +17,11 @@ export function makeFindSessionsByDateUser ({ findSessionsByDateUserUsecase }) {
                 },
                 statusCode: response.statusCode,
 
-                body: { type: statusCodeToType(response.statusCode),
+                body: {
+                    type: statusCodeToType(response.statusCode),
                     message: response.message,
-                    trackingCode: response.trackingCode,
-                    trackingEndTime: response.trackingEndTime,
-                    trackingUrl: response.trackingUrl,
-                    trackingUpdateInterval: response.trackingUpdateInterval,
-                    trackingSecret: response.trackingSecret,
+                    filterDate: response.filterDate,
+                    trackingSessions: response.trackingSessions
                 }
             }
         } catch (e) {
