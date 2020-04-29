@@ -119,3 +119,9 @@ export function getDisplayDate(date) {
 
     return  dd + '/' + mm + '/' + yyyy;
 }
+
+export function dateDifferenceInMinutes(oldDate, newDate) {
+    const diffMs = Math.abs(oldDate - newDate);
+    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    return diffMins;
+}

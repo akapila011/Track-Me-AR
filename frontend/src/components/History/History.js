@@ -19,18 +19,10 @@ export default class History extends Component {
 
             view: "results", // results/detail
 
+            zoomedLocation: null,  // {latitude, longitude, time} used to zoom in when viewing details
+
             filterDate: new Date(),  // date to look for tracking sessions
-            trackingSessions: [
-                {id: "1", key: "1",
-                    trackingCode: "5GBA72X",
-                    startTime: "10:32",
-                    duration: "12 minutes",
-                    endTime: "10:44",
-                    locations: [
-                        {time: "12:36", latitude: "-1.23484", longitude: "36.45722"}
-                    ]
-                }
-            ], // results from server for the date
+            trackingSessions: [], // results from server for the date
             trackingSession: null,  // object holding all info for a selected tracking session
         };
     }
@@ -53,6 +45,17 @@ export default class History extends Component {
             let data = response.data;
             if (data.type === "success" && isArray(data.trackingSessions)) {
                 showMessage(this, data.type, data.message);
+                // const formattedTrackingSessions = data.trackingSessions.map(session => {
+                //     return {
+                //         trackingCode: session.trackingCode,
+                //         startTime: new Date(session.startTime),
+                //         endTime: new Date(session.endTime),
+                //         forceStoppedAt: new Date(session.forceStoppedAt),
+                //         duration: session.duration,
+                //         locations: session.locations
+                //
+                //     }
+                // });
                 this.setState({trackingSessions: data.trackingSessions});
             }
         }).catch((error) => {
@@ -85,7 +88,12 @@ export default class History extends Component {
         this.setState({
             view: "results",
             trackingSession: null,
+            zoomedLocation: null,
         })
+    }
+
+    goToLocation(location) {
+        this.setState({zoomedLocation: location});
     }
 
     render() {
@@ -98,7 +106,7 @@ export default class History extends Component {
                   alignItems="center"
             >
 
-                <Grid item xs={5} style={{paddingLeft: "1%", height: "100%"}}>
+                <Grid item xs={5} style={{paddingLeft: "1%", height: "80vh"}}>
                     <h2>{this.props.name || this.props.email} Tracking History</h2>
                     <Snackbar
                         open={this.state.message}
@@ -120,6 +128,7 @@ export default class History extends Component {
                             <DetailView
                                 trackingSession={trackingSession}
                                 backToSearchResults={this.backToSearchResults.bind(this)}
+                                goToLocation={this.goToLocation.bind(this)}
                             />
                             }
                         </div>
@@ -131,7 +140,7 @@ export default class History extends Component {
                 </Grid>
                 <Grid item xs={7}>
                     <ViewTracking
-                        location={null}
+                        zoomedLocation={this.state.zoomedLocation}
                     />
                 </Grid>
 

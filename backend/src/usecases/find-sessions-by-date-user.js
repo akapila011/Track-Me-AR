@@ -1,4 +1,4 @@
-import {getDayEnd, getDayStart, getDisplayDate, isValidDate} from "../util/util";
+import {dateDifferenceInMinutes, getDayEnd, getDayStart, getDisplayDate, isValidDate} from "../util/util";
 
 export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
     return async function findSessionsByDateUser({filterDate, userId}) {
@@ -27,7 +27,7 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
         const trackingSessions = await trackingSessionsDb.findBetweenTimesForUser(dayStart, dayEnd, userId);
         if (trackingSessions && trackingSessions.length < 1) {
             response.statusCode = 200;
-            response.message = `No Tracking Sessions found on ${parsedFilterDate}`;
+            response.message = `No Tracking Sessions found on ${getDisplayDate(parsedFilterDate)}`;
             return response;
         }
 
@@ -42,7 +42,7 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
                     startTime: session.startTime,
                     endTime: session.endTime,
                     forceStoppedAt: session.forceStoppedAt,
-                    duration: session.forceStoppedAt ? session.forceStoppedAt - session.startTime : session.endTime,
+                    duration: dateDifferenceInMinutes(session.startTime, session.forceStoppedAt ? session.forceStoppedAt : session.endTime),
                     locations: []
                 }
             }

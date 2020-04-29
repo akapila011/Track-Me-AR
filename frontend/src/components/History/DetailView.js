@@ -7,35 +7,48 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
+import Grid from "@material-ui/core/Grid";
+import MyLocationIcon from '@material-ui/icons/MyLocation';
 
 export class DetailView extends Component {
     render() {
         const {trackingCode, startTime, endTime, forceStoppedAt, duration, locations} = this.props.trackingSession;
+        const finishedTime = forceStoppedAt || endTime;
         return (
-            <div>
-                <h3>{trackingCode}</h3>
+            <Grid container justify="space-around">
                 <ArrowBackIcon onClick={this.props.backToSearchResults}/>
-                <span>Started: {startTime}</span>
-                <span>Ended: {forceStoppedAt || endTime}</span>
-                <span>Duration: {duration}</span>
+                <br/><br/>
+                <span><strong style={{color: "orange", fontSize: "22px"}}>{trackingCode}</strong></span>
+                <br/>
+
+                <Grid direction={"row"}>
+                    <span style={{fontSize: "14px"}}>Started: <strong>{new Date(startTime).toLocaleTimeString()}</strong></span>
+                    <br/>
+                    <span style={{fontSize: "14px", fontStyle: "italic"}}>Duration: <strong>{duration}</strong> minutes</span>
+                    <br/>
+                    <span style={{fontSize: "14px"}}>Ended: <strong>{new Date(finishedTime).toLocaleTimeString()}</strong></span>
+                </Grid>
+
                 <TableContainer component={Paper}>
                     <Table aria-label="customized table">
                         <TableHead>
                             <TableRow>
                                 <TableCell>Time</TableCell>
                                 <TableCell align="right">Location</TableCell>
+                                <TableCell align="right"></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {locations.map((row) => (
                                 <LocationRow
                                     item={row}
+                                    goToLocation={() => {this.props.goToLocation(row);}}
                                 />
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </div>
+            </Grid>
         )
     }
 }
@@ -45,8 +58,9 @@ class LocationRow extends Component {
         const {id, key, latitude, longitude, time} = this.props.item;
         return (
             <TableRow id={id} key={key} onHover={() => {console.log(id)}}>
-                <TableCell>{time}</TableCell>
+                <TableCell>{new Date(time).toLocaleTimeString()}</TableCell>
                 <TableCell align="right">{latitude}, {longitude}</TableCell>
+                <TableCell align="right" onClick={this.props.goToLocation}><MyLocationIcon/></TableCell>
             </TableRow>
         );
     }

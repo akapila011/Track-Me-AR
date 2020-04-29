@@ -42,7 +42,7 @@ export class SearchResults extends Component {
                             <TableRow>
                                 <TableCell>Tracking Code</TableCell>
                                 <TableCell align="right">Started</TableCell>
-                                <TableCell align="right">Duration</TableCell>
+                                <TableCell align="right">Duration (min)</TableCell>
                                 <TableCell align="right">Ended</TableCell>
                                 <TableCell align="right"></TableCell>
                             </TableRow>
@@ -78,10 +78,10 @@ class TrackingSessionsRow extends Component {
         const {id, key, trackingCode, startTime, duration, endTime} = this.props.item;
         return (
             <TableRow id={id} key={key}>
-                <TableCell>{trackingCode}</TableCell>
-                <TableCell align="right">{startTime}</TableCell>
+                <TableCell style={{fontWeight: "bold"}}>{trackingCode}</TableCell>
+                <TableCell align="right">{new Date(startTime).toLocaleTimeString()}</TableCell>
                 <TableCell align="right">{duration}</TableCell>
-                <TableCell align="right">{endTime}</TableCell>
+                <TableCell align="right">{new Date(endTime).toLocaleTimeString()}</TableCell>
                 <TableCell align="right" onClick={this.props.expandDetails}> <ChevronRightIcon/></TableCell>
             </TableRow>
         );
