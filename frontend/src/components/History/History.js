@@ -97,7 +97,7 @@ export default class History extends Component {
     }
 
     render() {
-        const {filterDate, trackingSessions, view, trackingSession}  = this.state;
+        const {filterDate, trackingSessions, view, trackingSession, zoomedLocation}  = this.state;
         return (
             <Grid id="history"
                   container
@@ -127,6 +127,7 @@ export default class History extends Component {
                             {   view === "detail" && trackingSession &&
                             <DetailView
                                 trackingSession={trackingSession}
+                                zoomedLocation={zoomedLocation}
                                 backToSearchResults={this.backToSearchResults.bind(this)}
                                 goToLocation={this.goToLocation.bind(this)}
                             />
@@ -141,6 +142,7 @@ export default class History extends Component {
                 <Grid item xs={7}>
                     <ViewTracking
                         zoomedLocation={this.state.zoomedLocation}
+                        sessionLocations={trackingSession ? trackingSession.locations : []}
                     />
                 </Grid>
 

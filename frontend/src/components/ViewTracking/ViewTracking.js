@@ -10,7 +10,7 @@ import Overlay from 'pigeon-overlay'
 
 import mapPlaceholder from "../../assets/images/map-placeholder.jpg";
 import arPlaceholder from "../../assets/images/ar-placeholder.png";
-import {isGeolocationAvailable, setCoords} from "../../util/util";
+import {isArray, isGeolocationAvailable, setCoords} from "../../util/util";
 import {TRACK_SESSION_URL} from "../../util/urls";
 
 export class ViewTracking extends Component {
@@ -74,7 +74,7 @@ export class ViewTracking extends Component {
         const coords = this.state.coords;
         // const coords = null;
 
-        const center = coords && coords.latitude && coords.longitude ? [coords.latitude, coords.longitude]: [-1.272007, 36.81425];
+        let center = coords && coords.latitude && coords.longitude ? [coords.latitude, coords.longitude]: [-1.272007, 36.81425];
         // console.log("center ", center);
         let zoom = coords && coords.latitude && coords.longitude ? 15 : 12;
 
@@ -84,13 +84,19 @@ export class ViewTracking extends Component {
         const viewMap = this.state.view === "map";
         const viewAR = this.state.view === "ar";
 
+        const sessionLocations = isArray(this.props.sessionLocations) ? this.props.sessionLocations : [];
+        const hasSessionLocations = sessionLocations.length > 0;
+        center = hasSessionLocations ? [sessionLocations[0].latitude, sessionLocations[0].longitude] : center;
+        zoom = hasSessionLocations ? 15 : zoom;
+
         const isZoomedLocation = this.props.zoomedLocation && this.props.zoomedLocation.latitude &&
             this.props.zoomedLocation.longitude && this.props.zoomedLocation.time;
         const zoomedLat = isZoomedLocation ? this.props.zoomedLocation.latitude : null;
         const zoomedLong = isZoomedLocation ? this.props.zoomedLocation.longitude : null;
         const zoomedTime = isZoomedLocation ? this.props.zoomedLocation.time : null;
-        console.log("isZoomedLocation ", isZoomedLocation);
-        zoom = isZoomedLocation ? 18 : zoom;
+        // console.log("isZoomedLocation ", isZoomedLocation);
+        center = isZoomedLocation ? [zoomedLat, zoomedLong] : center;
+        zoom = isZoomedLocation ? 17 : zoom;
 
         return (
             <Grid container id="view-location-container">
@@ -107,7 +113,7 @@ export class ViewTracking extends Component {
                     <Container id="map">
                         <Map center={center} zoom={zoom} width={700} height={450} attribution={false}>
                             {
-                                !isZoomedLocation && isGeolocationAvailable && coords &&
+                                !hasSessionLocations && isGeolocationAvailable && coords &&
                                 <Marker anchor={center} payload={1} style={{color: "red"}}
                                         onClick={({event, anchor, payload}) => {
                                             console.log("Marker Click ", event)
@@ -116,7 +122,7 @@ export class ViewTracking extends Component {
                                         }}/>
                             }
                             {
-                                tracking && trackingPos.length == 2 &&
+                                !hasSessionLocations && tracking && trackingPos.length == 2 &&
                                 <Marker anchor={trackingPos} payload={1} style={{color: "blue"}}
                                         onClick={({event, anchor, payload}) => {
                                             console.log("Tracking Click ", event)
@@ -125,11 +131,13 @@ export class ViewTracking extends Component {
                                         }}/>
                             }
                             {
-                                !tracking && isZoomedLocation &&
-                                <Marker anchor={[zoomedLat, zoomedLong]} payload={1} style={{color: "green"}}
-                                        onClick={({event, anchor, payload}) => {
-                                            console.log("zoomedTime ", zoomedTime);
-                                        }}/>
+                                !tracking && hasSessionLocations &&
+                                sessionLocations.map((row) => (
+                                    <Marker anchor={[row.latitude, row.longitude]} payload={1} style={{color: "green"}}
+                                            onClick={({event, anchor, payload}) => {
+                                                console.log("time ", row.time);
+                                            }}/>
+                                ))
                             }
                         </Map>
                     </Container>
