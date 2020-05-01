@@ -30,7 +30,7 @@ export class DetailView extends Component {
                     <span style={{fontSize: "14px"}}>Ended: <strong>{new Date(finishedTime).toLocaleTimeString()}</strong></span>
                 </Grid>
 
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} style={{height: "60vh"}}>
                     <Table aria-label="customized table">
                         <TableHead>
                             <TableRow>

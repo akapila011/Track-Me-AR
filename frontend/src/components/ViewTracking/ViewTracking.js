@@ -90,7 +90,7 @@ export class ViewTracking extends Component {
         zoom = hasSessionLocations ? 15 : zoom;
 
         const isZoomedLocation = this.props.zoomedLocation && this.props.zoomedLocation.latitude &&
-            this.props.zoomedLocation.longitude && this.props.zoomedLocation.time;
+            this.props.zoomedLocation.longitude && this.props.zoomedLocation.time ? true : false;
         const zoomedLat = isZoomedLocation ? this.props.zoomedLocation.latitude : null;
         const zoomedLong = isZoomedLocation ? this.props.zoomedLocation.longitude : null;
         const zoomedTime = isZoomedLocation ? this.props.zoomedLocation.time : null;
@@ -132,12 +132,25 @@ export class ViewTracking extends Component {
                             }
                             {
                                 !tracking && hasSessionLocations &&
-                                sessionLocations.map((row) => (
-                                    <Marker anchor={[row.latitude, row.longitude]} payload={1} style={{color: "green"}}
-                                            onClick={({event, anchor, payload}) => {
-                                                console.log("time ", row.time);
-                                            }}/>
-                                ))
+                                sessionLocations.map((row) => {
+                                    if (isZoomedLocation) {
+                                        if (row.id === this.props.zoomedLocation.id) {
+                                            return (
+                                                <Marker anchor={[row.latitude, row.longitude]} payload={1} style={{color: "green"}}
+                                                        onClick={({event, anchor, payload}) => {
+                                                            console.log("time ", row.time);
+                                                        }}/>
+                                            );
+                                        }
+                                    } else {
+                                        return (
+                                            <Marker anchor={[row.latitude, row.longitude]} payload={1} style={{color: "green"}}
+                                                    onClick={({event, anchor, payload}) => {
+                                                        console.log("time ", row.time);
+                                                    }}/>
+                                        );
+                                    }
+                                })
                             }
                         </Map>
                     </Container>

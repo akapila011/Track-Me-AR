@@ -36,7 +36,7 @@ export class SearchResults extends Component {
                         }}
                     />
                 </form>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} style={{height: "60vh"}}>
                     <Table aria-label="customized table">
                         <TableHead>
                             <TableRow>

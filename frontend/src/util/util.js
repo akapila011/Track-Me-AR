@@ -8,7 +8,7 @@ export function stopLoader(self) {
 }
 
 export function showMessage(self, type, message, timeout = 3000) {
-    console.log("setting message ", message);
+    // console.log("setting message ", message);
     self.setState({message: message, messageType: type}, () => {
         if (!isNaN(timeout)) {
             setTimeout(() => {self.setState({message: "", messageType: ""});}, 3000)
