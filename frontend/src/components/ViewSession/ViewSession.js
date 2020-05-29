@@ -22,15 +22,12 @@ export default class ViewSession extends Component {
                   justify="center"
                   alignItems="center"
             >
-                <Grid item xs={9}>
-                    <ViewTracking
-                        trackingCode={this.props.trackingCode}
-                    />
-                </Grid>
-                <Grid item xs={3}>
-                    <span>data</span>
-                </Grid>
-
+                <h3>Tracking Session: <span style={{color: "orange"}}>{this.props.trackingCode}</span></h3>
+                <ViewTracking
+                    mapWidth={"92vw"}
+                    mapHeight={"78vh"}
+                    trackingCode={this.props.trackingCode}
+                />
             </Grid>
         )
     }

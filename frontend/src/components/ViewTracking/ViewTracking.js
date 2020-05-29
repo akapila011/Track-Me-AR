@@ -80,6 +80,8 @@ export class ViewTracking extends Component {
 
         const tracking = this.state.tracking;
         const trackingPos = tracking && tracking.latitude && tracking.longitude ? [tracking.latitude, tracking.longitude] : [];
+        center = tracking && tracking.latitude && tracking.longitude ? [tracking.latitude, tracking.longitude] : center;
+        zoom = tracking && tracking.latitude && tracking.longitude ? 16 : 12;
 
         const viewMap = this.state.view === "map";
         const viewAR = this.state.view === "ar";
@@ -111,7 +113,7 @@ export class ViewTracking extends Component {
                 }
                 <Grid item xs={12}>
                     <Container id="map">
-                        <Map center={center} zoom={zoom} width={700} height={450} attribution={false}>
+                        <Map center={center} zoom={zoom} width={this.props.mapWidth || 700} height={this.props.mapHeight || 450} attribution={false}>
                             {
                                 !hasSessionLocations && isGeolocationAvailable && coords &&
                                 <Marker anchor={center} payload={1} style={{color: "red"}}

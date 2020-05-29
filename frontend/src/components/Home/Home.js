@@ -222,7 +222,7 @@ export default class Home extends Component {
         }).then((response) => {
             // console.log("findTrackingSession response ", response);
             let data = response.data;
-            if (data.type === "success" && data.startTime && data.endTime) { // TODO: should get event stream url
+            if (data.type === "success" && data.startTime && data.endTime) {
                 showMessage(this, data.type, data.message);
                 const foundSession = {
                     trackingCode: data.trackingCode,
@@ -361,7 +361,7 @@ export default class Home extends Component {
                                           <option value={1200}>Twenty minutes</option>
                                           <option value={1800}>Thirty minutes</option>
                                       </NativeSelect>
-                                      <FormHelperText>Select how long you want to be track for</FormHelperText>
+                                      <FormHelperText>Select how long you want to be tracked for</FormHelperText>
                                   </Grid>
                               }
 
