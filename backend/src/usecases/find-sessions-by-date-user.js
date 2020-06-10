@@ -15,6 +15,7 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
             response.message = "Invalid filter date";
             return response;
         }
+        console.log("USECASE parsedFilterDate ", parsedFilterDate);
 
         if (!userId) { // not logged in
             response.statusCode = 403;
@@ -30,6 +31,8 @@ export function makeFindSessionsByDateUser({trackingSessionsDb, locationsDb}) {
             response.message = `No Tracking Sessions found on ${getDisplayDate(parsedFilterDate)}`;
             return response;
         }
+        console.log("USECASE trackingSessions db ", trackingSessions);
+
 
         const trackingSessionIds = trackingSessions.map(trackingSession => trackingSession.id);
         const allLocations = await locationsDb.locationsByTrackingSessions(trackingSessionIds);

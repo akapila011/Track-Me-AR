@@ -22,7 +22,17 @@ export default class History extends Component {
             zoomedLocation: null,  // {latitude, longitude, time} used to zoom in when viewing details
 
             filterDate: new Date(),  // date to look for tracking sessions
-            trackingSessions: [], // results from server for the date
+            trackingSessions: [
+                {id: "1", key: "1",
+                    trackingCode: "5GBA72X",
+                    startTime: "10:32",
+                    duration: "12 minutes",
+                    endTime: "10:44",
+                    locations: [
+                        {time: "12:36", latitude: "-1.23484", longitude: "36.45722"}
+                    ]
+                }
+            ], // results from server for the date
             trackingSession: null,  // object holding all info for a selected tracking session
         };
     }
