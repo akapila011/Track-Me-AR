@@ -37,3 +37,15 @@ export function getDatabasePort() {
 export function getDatabaseName() {
     return process.env.DB_NAME
 }
+
+export function getBrokerHost() {
+    return process.env.message_broker_host
+}
+
+export function getBrokerPort() {
+    return process.env.message_broker_port
+}
+
+export function getBrokerMainTopic() {
+    return process.env.message_broker_main_topic
+}

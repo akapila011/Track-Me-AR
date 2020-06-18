@@ -2,3 +2,8 @@
 BASE_URL=http://localhost:5000
 DB_URL=mongodb://localhost:27017
 DB_NAME=trackmeardb
+
+
+message_broker_host=127.0.0.1
+message_broker_port=9092
+message_broker_main_topic=trackingSessions

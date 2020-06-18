@@ -1,10 +1,11 @@
 import kafka from "kafka-node";
 import {log} from "../util/log";
+import {getBrokerHost, getBrokerMainTopic, getBrokerPort} from "../util/config";
 
 const Producer = kafka.Producer;
-const client = new kafka.KafkaClient({kafkaHost: "127.0.0.1:9092"}); // TODO: from .env
+const client = new kafka.KafkaClient({kafkaHost: getBrokerHost() + ":" + getBrokerPort()});
 
-const kafka_topic = "trackingSessions";
+const kafka_topic = getBrokerMainTopic();
 const payloads = [
     {
         topic: "trackingSessions",
