@@ -8,14 +8,14 @@ const client = new kafka.KafkaClient({kafkaHost: getBrokerHost() + ":" + getBrok
 const kafka_topic = getBrokerMainTopic();
 const payloads = [
     {
-        topic: "trackingSessions",
+        topic: kafka_topic,
         messages: "hello world"
     }
 ];
 
 export const producer = new Producer(client);
 producer.on('ready', async function() {
-    log.info(`Kafka producer read on TODO from env host;port;topic`);
+    log.info(`Kafka producer ready on ${getBrokerHost()}:${getBrokerPort()} main_topic='${kafka_topic}'`);
     // let push_status = producer.send(payloads, (err, data) => {
     //     if (err) {
     //         console.log('[kafka-producer -> '+kafka_topic+']: broker update failed');
@@ -34,7 +34,7 @@ producer.on('error', function(err) {  //TODO: handle retries from here
 const Consumer = kafka.Consumer;
 const consumer = new Consumer(
     client,
-    [{ topic: "trackingSessions", partition: 0 }],
+    [{ topic: kafka_topic, partition: 0 }],
     {
         autoCommit: true, // TODO: test and try out
         fetchMaxWaitMs: 2000,

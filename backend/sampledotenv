@@ -1,9 +1,13 @@
-# Save this file as .env and fill in the appropriate values
+
+ENV=dev
 BASE_URL=http://localhost:5000
-DB_URL=mongodb://localhost:27017
+
+DB_HOST=127.0.0.1
+DB_PORT=27017
 DB_NAME=trackmeardb
 
+JWT_SECRET_KEY=
 
-message_broker_host=127.0.0.1
-message_broker_port=9092
-message_broker_main_topic=trackingSessions
+message.broker.host=127.0.0.1
+message.broker.port=9092
+message.broker.queue.main=trackingSessions
